@@ -1,7 +1,6 @@
 ---
 import Icon from '../ui/Icon.astro';
 import Bubbles from '../ui/Bubbles.astro';
-import Rise from '../ui/Rise.astro';
 import Ribbon from '../ui/Ribbon.astro';
 import { pick, URLS, FIRM, type Lang } from '../../i18n';
 import home from '../../i18n/home.json';
@@ -13,7 +12,6 @@ const t = pick(home, Astro.props.lang);
 
 <section class="bs-akce bs-dark" id="akce">
   <Ribbon class="bs-sec-ribbon" rgb="140,215,255" seed={14} flip="x" />
-  <Rise tone="dark" rings={[{ x: 22, y: 50, s: 640 }]} />
   <Bubbles
     items={[
       { s: 360, x: 88, y: 30, tone: 'navy' },

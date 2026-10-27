@@ -1,6 +1,5 @@
 ---
 import Icon from '../ui/Icon.astro';
-import Rise from '../ui/Rise.astro';
 import Bubbles from '../ui/Bubbles.astro';
 import { pick, URLS, type Lang } from '../../i18n';
 import home from '../../i18n/home.json';
@@ -18,7 +17,6 @@ const words = t.why_lead.split(' ');
       { s: 260, x: 96, y: 78 },
     ]}
   />
-  <Rise rings={[{ x: 90, y: 20, s: 420 }]} />
   <div class="bs-wrap bs-why__in">
     <div class="bs-why__head">
       <p class="bs-kicker" data-reveal>{t.why_kicker}</p>
