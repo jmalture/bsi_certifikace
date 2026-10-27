@@ -1,0 +1,72 @@
+---
+/** Decorative soft bubbles (the blob shape of bsicertifikace.cz "Bublina3", blue at 10 %). Absolutely positioned
+ *  in the parent; each one drifts and morphs slowly. s = size in vmin-ish px, x/y = position in %, d = delay. */
+interface Bubble {
+  s: number;
+  x: number;
+  y: number;
+  d?: number;
+  tone?: 'blue' | 'sky' | 'navy';
+}
+interface Props {
+  items: Bubble[];
+}
+const { items } = Astro.props;
+---
+
+<div class="bs-bubbles" aria-hidden="true">
+  {
+    items.map((b, i) => (
+      <span
+        class={`bs-bubble bs-bubble--${b.tone ?? 'blue'}`}
+        style={`--s:${b.s}px;--x:${b.x}%;--y:${b.y}%;--d:${(b.d ?? i * 1.7).toFixed(1)}s;--r:${i % 2 ? 'var(--bs-blob-2)' : 'var(--bs-blob)'}`}
+      />
+    ))
+  }
+</div>
+
+<style is:global>
+  .bs-bubbles {
+    position: absolute;
+    inset: 0;
+    overflow: clip;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .bs-bubbles ~ .bs-wrap {
+    position: relative;
+    z-index: 1;
+  }
+  .bs-bubble {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: min(var(--s), 60vw);
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    border-radius: var(--r);
+    animation: bs-bubble 18s ease-in-out infinite alternate;
+    animation-delay: calc(var(--d) * -1);
+  }
+  .bs-bubble--blue {
+    background: rgba(0, 156, 221, 0.1);
+  }
+  .bs-bubble--sky {
+    background: var(--bs-sky);
+    opacity: 0.55;
+  }
+  .bs-bubble--navy {
+    background: rgba(255, 255, 255, 0.06);
+  }
+  @keyframes bs-bubble {
+    0% {
+      transform: translate(0, 0) rotate(0deg) scale(1);
+    }
+    50% {
+      border-radius: var(--bs-blob-2);
+    }
+    100% {
+      transform: translate(2.5vw, -3vw) rotate(24deg) scale(1.1);
+    }
+  }
+</style>

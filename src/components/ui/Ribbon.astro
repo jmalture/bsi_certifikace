@@ -1,0 +1,124 @@
+---
+interface Props {
+  /** extra class on the wrapper (position it in the parent) */
+  class?: string;
+}
+const { class: cls = '' } = Astro.props;
+---
+
+<div class:list={['bs-ribbon', cls]} aria-hidden="true">
+  <canvas data-ribbon></canvas>
+</div>
+
+<script>
+  /**
+   * Remake of bsicertifikace.cz "vlny-1": a ribbon of ~36 hair-thin blue lines that fan out from one wave curve and
+   * fade downwards, with one tall folding arch. Here it is drawn live: the arch drifts and breathes, a ripple
+   * travels along the lines and every line trails the previous one a little (that is what gives the silky fold).
+   * Pauses off screen (dt/bs:visibility from site.ts), one still frame with prefers-reduced-motion.
+   */
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const g = (x: number, c: number, w: number) => Math.exp(-(((x - c) / w) ** 2));
+
+  document.querySelectorAll<HTMLCanvasElement>('canvas[data-ribbon]').forEach((cv) => {
+    const ctx = cv.getContext('2d');
+    const host = cv.closest<HTMLElement>('[data-live]') ?? cv.parentElement!;
+    if (!ctx) return;
+    const N = 38;
+    const STEPS = 150;
+    let w = 0;
+    let h = 0;
+    let dpr = 1;
+    let raf = 0;
+    let running = false;
+    let t0 = performance.now();
+    const rgb = '0,156,221';
+
+    const resize = () => {
+      dpr = Math.min(2, devicePixelRatio || 1);
+      const r = cv.getBoundingClientRect();
+      w = r.width;
+      h = r.height;
+      cv.width = Math.round(w * dpr);
+      cv.height = Math.round(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
+    // base curve (0..1 in both axes) at time t for line i
+    const curve = (u: number, t: number, i: number) => {
+      const lag = i * 0.16;
+      const tt = t - lag;
+      const archC = 0.6 + 0.035 * Math.sin(tt * 0.42) + i * 0.0016;
+      const archW = 0.1 + 0.016 * Math.sin(tt * 0.6 + 1) + i * 0.0009;
+      const archA = 0.3 + 0.045 * Math.sin(tt * 0.5);
+      const hump = 0.1 * g(u, 0.31 + 0.02 * Math.sin(tt * 0.33), 0.12);
+      const tail = 0.05 * g(u, 0.82, 0.18);
+      const ripple = 0.018 * Math.sin(u * 9 - tt * 0.9) * (0.4 + 0.6 * u);
+      const drift = 0.03 * Math.sin(u * 3.2 + tt * 0.35);
+      return 0.76 - archA * g(u, archC, archW) - hump - tail + ripple + drift;
+    };
+
+    const draw = (now: number) => {
+      const t = reduce ? 3.2 : (now - t0) / 1000;
+      ctx.clearRect(0, 0, w, h);
+      ctx.lineWidth = 1;
+      for (let i = 0; i < N; i++) {
+        const k = i / (N - 1);
+        const a = 0.55 * Math.pow(1 - k, 1.5) + 0.02;
+        ctx.strokeStyle = `rgba(${rgb},${a.toFixed(3)})`;
+        ctx.beginPath();
+        for (let s = 0; s <= STEPS; s++) {
+          const u = s / STEPS;
+          // lines spread downwards, more under the arch (the fold)
+          const spread = (0.0042 + 0.006 * g(u, 0.5, 0.2)) * i;
+          const x = (u + 0.018 * k * Math.sin(t * 0.3 + u * 2)) * w;
+          const y = (curve(u, t, i) + spread) * h;
+          if (s === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+    };
+
+    const loop = (now: number) => {
+      draw(now);
+      if (running) raf = requestAnimationFrame(loop);
+    };
+    const start = () => {
+      if (running || reduce) return;
+      running = true;
+      raf = requestAnimationFrame(loop);
+    };
+    const stop = () => {
+      running = false;
+      cancelAnimationFrame(raf);
+    };
+
+    resize();
+    draw(performance.now());
+    new ResizeObserver(() => {
+      resize();
+      draw(performance.now());
+    }).observe(cv);
+    host.addEventListener('bs:visibility', (e) => ((e as CustomEvent<boolean>).detail ? start() : stop()));
+    if (!reduce && 'IntersectionObserver' in window) {
+      // initial state before the first visibility event
+      new IntersectionObserver((en) => (en[0].isIntersecting ? start() : stop())).observe(host);
+    } else start();
+  });
+</script>
+
+<style is:global>
+  .bs-ribbon {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 78%, transparent 100%);
+    mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 78%, transparent 100%);
+  }
+  .bs-ribbon canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+</style>

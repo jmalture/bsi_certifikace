@@ -1,125 +1,354 @@
 ---
 import Icon from '../ui/Icon.astro';
+import Bubbles from '../ui/Bubbles.astro';
 import { pick, URLS, type Lang } from '../../i18n';
 import home from '../../i18n/home.json';
 interface Props {
   lang: Lang;
 }
 const t = pick(home, Astro.props.lang);
-const words = t.why_lead.split(' ');
+const total = String(t.why_points.length).padStart(2, '0');
 ---
 
-<section class="bs-section bs-why" id="bimPoint">
-  <div class="bs-wrap bs-why__in">
-    <div class="bs-why__head">
-      <p class="bs-kicker" data-reveal>{t.why_kicker}</p>
-      <h2 class="bs-h2 bs-lines">
-        <span class="bs-line"><span>{t.why_h2}</span></span>
-      </h2>
-      <p class="bs-why__lead" data-words>
-        {
-          words.map((w, i) => (
-            <>
-              <span class="bs-w" style={`--k:${i}`}>
-                {w}
-              </span>{' '}
-            </>
-          ))
-        }
-      </p>
-      <a class="bs-btn bs-btn--blue" href={URLS.bimpoint} target="_blank" rel="noopener" data-reveal>
-        {t.why_cta}
-        <Icon name="arrow" size={18} />
-      </a>
-    </div>
-    <ol class="bs-why__list">
+<section class="bs-why" id="bimPoint" data-hscroll>
+  <Bubbles
+    items={[
+      { s: 520, x: 8, y: 20 },
+      { s: 300, x: 62, y: 86, tone: 'sky' },
+      { s: 420, x: 92, y: 14, tone: 'sky' },
+      { s: 180, x: 40, y: 8 },
+    ]}
+  />
+  <div class="bs-why__sticky">
+    <div class="bs-why__track" data-track>
+      <svg class="bs-why__line" aria-hidden="true" data-line>
+        <path d="" fill="none" stroke="var(--bs-blue)" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 12"
+        ></path>
+        <path d="" fill="none" stroke="var(--bs-blue)" stroke-width="4" stroke-linecap="round" data-draw></path>
+      </svg>
+
+      <div class="bs-why__intro">
+        <p class="bs-kicker" data-reveal>{t.why_kicker}</p>
+        <h2 class="bs-h2 bs-lines"><span class="bs-line"><span>{t.why_h2}</span></span></h2>
+        <p class="bs-why__lead" data-reveal style="--i:1">{t.why_lead}</p>
+        <a class="bs-btn bs-btn--blue" href={URLS.bimpoint} target="_blank" rel="noopener" data-reveal style="--i:2">
+          {t.why_cta}
+          <Icon name="arrow" size={18} />
+        </a>
+      </div>
+
       {
         t.why_points.map((p, i) => (
-          <li data-reveal="right" style={`--i:${i % 2}`}>
-            <span class="bs-why__n" aria-hidden="true">
+          <article class="bs-bub" style={`--k:${i}`} data-bub>
+            <span class="bs-bub__n" aria-hidden="true">
               {String(i + 1).padStart(2, '0')}
             </span>
             <p>{p}</p>
-          </li>
+          </article>
         ))
       }
-    </ol>
+    </div>
+
+    <div class="bs-why__prog" aria-hidden="true">
+      <span class="bs-why__bar"><i data-bar></i></span>
+      <span class="bs-why__count"><b data-cur>01</b> / {total}</span>
+    </div>
   </div>
 </section>
 
+<script>
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const desk = matchMedia('(min-width: 901px)');
+
+  document.querySelectorAll<HTMLElement>('[data-hscroll]').forEach((sec) => {
+    const track = sec.querySelector<HTMLElement>('[data-track]')!;
+    const bubs = [...sec.querySelectorAll<HTMLElement>('[data-bub]')];
+    const svg = sec.querySelector<SVGSVGElement>('[data-line]')!;
+    const [dash, draw] = [...svg.querySelectorAll<SVGPathElement>('path')];
+    const bar = sec.querySelector<HTMLElement>('[data-bar]')!;
+    const cur = sec.querySelector<HTMLElement>('[data-cur]')!;
+    let dist = 0;
+    let len = 1;
+    let pinned = false;
+    let ticking = false;
+
+    const layout = () => {
+      pinned = desk.matches && !reduce;
+      sec.classList.toggle('is-pinned', pinned);
+      track.style.transform = '';
+      if (!pinned) {
+        sec.style.height = '';
+        return;
+      }
+      dist = Math.max(0, track.scrollWidth - innerWidth + parseFloat(getComputedStyle(track).paddingRight));
+      sec.style.height = dist + innerHeight + 'px';
+      // path through the bubble centres
+      const pts = bubs.map((b) => [b.offsetLeft + b.offsetWidth / 2, b.offsetTop + b.offsetHeight / 2]);
+      const h = track.clientHeight;
+      svg.setAttribute('width', String(track.scrollWidth));
+      svg.setAttribute('height', String(h));
+      let d = `M ${track.querySelector<HTMLElement>('.bs-why__intro')!.offsetWidth * 0.6} ${h * 0.55}`;
+      let px = parseFloat(d.split(' ')[1]);
+      let py = h * 0.55;
+      pts.forEach(([x, y]) => {
+        const mx = (px + x) / 2;
+        d += ` C ${mx} ${py}, ${mx} ${y}, ${x} ${y}`;
+        px = x;
+        py = y;
+      });
+      dash.setAttribute('d', d);
+      draw.setAttribute('d', d);
+      len = draw.getTotalLength();
+      draw.style.strokeDasharray = `${len}`;
+      update();
+    };
+
+    const update = () => {
+      ticking = false;
+      if (!pinned) return;
+      const p = Math.min(1, Math.max(0, (scrollY - sec.offsetTop) / Math.max(1, sec.offsetHeight - innerHeight)));
+      track.style.transform = `translate3d(${-p * dist}px,0,0)`;
+      draw.style.strokeDashoffset = String(len * (1 - Math.min(1, p * 1.04)));
+      bar.style.transform = `scaleX(${p})`;
+      // active bubble = the one nearest to 55 % of the viewport width
+      let best = 0;
+      let bd = Infinity;
+      bubs.forEach((b, i) => {
+        const r = b.getBoundingClientRect();
+        const dd = Math.abs(r.left + r.width / 2 - innerWidth * 0.55);
+        if (dd < bd) {
+          bd = dd;
+          best = i;
+        }
+      });
+      bubs.forEach((b, i) => b.classList.toggle('is-active', i === best));
+      cur.textContent = String(best + 1).padStart(2, '0');
+    };
+
+    addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true },
+    );
+    addEventListener('resize', layout);
+    desk.addEventListener('change', layout);
+    document.fonts?.ready.then(layout);
+    layout();
+  });
+</script>
+
 <style is:global>
   .bs-why {
-    background: #fff;
-    overflow: clip;
+    position: relative;
+    background: linear-gradient(180deg, #fff 0%, var(--bs-mist) 100%);
   }
-  .bs-why__in {
-    display: grid;
-    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-    gap: clamp(32px, 6vw, 110px);
-    align-items: start;
+  .bs-why__sticky {
+    position: relative;
+    z-index: 1;
+    padding-block: clamp(72px, 9vw, 130px);
   }
-  .bs-why__head {
-    position: sticky;
-    top: calc(var(--bs-header-h) + 32px);
+  .bs-why__track {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: clamp(28px, 4vw, 64px);
+    padding-inline: var(--bs-gutter);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    padding-bottom: 12px;
+  }
+  .bs-why__track::-webkit-scrollbar {
+    display: none;
+  }
+  .bs-why__line,
+  .bs-why__prog {
+    display: none;
+  }
+  .bs-why__intro {
+    flex: none;
     display: grid;
-    gap: 0;
     justify-items: start;
+    width: min(88vw, 520px);
+    scroll-snap-align: start;
   }
   .bs-why__lead {
-    margin: 28px 0 36px;
+    margin: 24px 0 32px;
     font-size: var(--bs-lead);
+    line-height: 1.6;
     color: var(--bs-navy);
-    line-height: 1.65;
   }
-  .bs-why__list {
-    list-style: none;
-    padding: 0;
+
+  /* The bubbles: big soft blobs, text inside, morphing slowly; the active one fills navy */
+  .bs-bub {
+    position: relative;
+    flex: none;
     display: grid;
-    gap: 18px;
-    counter-reset: why;
-  }
-  .bs-why__list li {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 22px;
-    align-items: start;
-    padding: clamp(22px, 2.4vw, 34px);
-    background: var(--bs-mist);
-    border: 1px solid var(--bs-line);
-    border-radius: var(--bs-r);
-    transition:
-      background-color var(--bs-med) var(--bs-ease),
-      transform var(--bs-med) var(--bs-ease),
-      box-shadow var(--bs-med) var(--bs-ease),
-      opacity var(--bs-slow) var(--bs-ease),
-      translate var(--bs-slow) var(--bs-ease);
-  }
-  .bs-why__list li:hover {
-    background: #fff;
-    transform: translateX(-6px);
+    align-content: center;
+    --w: min(78vw, 360px);
+    width: var(--w);
+    aspect-ratio: 1;
+    padding: calc(var(--w) * 0.15);
+    border-radius: var(--bs-blob);
+    background: linear-gradient(150deg, #fff 0%, var(--bs-sky-2) 60%, var(--bs-sky) 130%);
+    border: 1.5px solid var(--bs-line);
     box-shadow: var(--bs-shadow);
+    color: var(--bs-ink);
+    scroll-snap-align: center;
+    animation: bs-bub-morph 14s ease-in-out infinite alternate;
+    animation-delay: calc(var(--k) * -3s);
+    transition:
+      background-color var(--bs-slow) var(--bs-ease),
+      color var(--bs-med) var(--bs-ease),
+      box-shadow var(--bs-med) var(--bs-ease),
+      scale var(--bs-slow) var(--bs-ease);
   }
-  .bs-why__n {
+  .bs-bub:nth-of-type(even) {
+    border-radius: var(--bs-blob-2);
+  }
+  @keyframes bs-bub-morph {
+    50% {
+      border-radius: var(--bs-blob-2);
+    }
+    100% {
+      border-radius: 58% 42% 40% 60% / 44% 56% 44% 56%;
+    }
+  }
+  .bs-bub p {
+    font-size: clamp(0.95rem, 0.9rem + 0.25vw, 1.08rem);
+    line-height: 1.55;
+  }
+  .bs-bub__n {
+    position: absolute;
+    top: 8%;
+    left: 8%;
     display: grid;
     place-items: center;
-    width: 52px;
-    height: 52px;
-    border-radius: var(--bs-blob);
-    background: var(--bs-sky);
-    color: var(--bs-navy);
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--bs-blue);
+    color: #fff;
     font-weight: 800;
-    font-size: 0.95rem;
+    font-size: 1.05rem;
+    box-shadow: 0 10px 24px rgba(0, 156, 221, 0.4);
   }
-  .bs-why__list p {
-    color: var(--bs-ink);
-    padding-top: 10px;
+  .bs-bub::before,
+  .bs-bub::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    background: var(--bs-blue);
+    opacity: 0.18;
+    animation: bs-float 7s ease-in-out infinite alternate;
   }
-  @media (max-width: 900px) {
-    .bs-why__in {
-      grid-template-columns: 1fr;
+  .bs-bub::before {
+    width: 38px;
+    height: 38px;
+    right: 6%;
+    top: 10%;
+  }
+  .bs-bub::after {
+    width: 18px;
+    height: 18px;
+    right: 18%;
+    bottom: 6%;
+    animation-delay: -3s;
+  }
+  @keyframes bs-float {
+    to {
+      transform: translate(-8px, -16px);
     }
-    .bs-why__head {
-      position: static;
+  }
+
+  @media (min-width: 901px) {
+    .bs-why.is-pinned {
+      /* height is set by the script: distance to scroll + one viewport */
+    }
+    .bs-why.is-pinned .bs-why__sticky {
+      position: sticky;
+      top: 0;
+      height: 100svh;
+      display: grid;
+      align-content: center;
+      padding-block: 0;
+      overflow: clip;
+    }
+    .bs-why.is-pinned .bs-why__track {
+      overflow: visible;
+      scroll-snap-type: none;
+      width: max-content;
+      height: min(78svh, 700px);
+      padding-right: clamp(60px, 10vw, 180px);
+      will-change: transform;
+    }
+    .bs-why.is-pinned .bs-bub {
+      --w: clamp(300px, 27vw, 410px);
+    }
+    .bs-why.is-pinned .bs-bub:nth-of-type(odd) {
+      translate: 0 -9%;
+    }
+    .bs-why.is-pinned .bs-bub:nth-of-type(even) {
+      translate: 0 9%;
+    }
+    .bs-why.is-pinned .bs-bub.is-active {
+      background: linear-gradient(150deg, var(--bs-navy-2) 0%, var(--bs-navy) 100%);
+      color: #fff;
+      border-color: transparent;
+      box-shadow: var(--bs-shadow-lg);
+      scale: 1.07;
+    }
+    .bs-why.is-pinned .bs-bub.is-active p {
+      color: #fff;
+    }
+    .bs-why.is-pinned .bs-why__line {
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: visible;
+    }
+    .bs-why.is-pinned .bs-why__line path:first-child {
+      opacity: 0.3;
+    }
+    .bs-why.is-pinned .bs-bub,
+    .bs-why.is-pinned .bs-why__intro {
+      z-index: 1;
+    }
+    .bs-why.is-pinned .bs-why__prog {
+      position: absolute;
+      left: var(--bs-gutter);
+      right: var(--bs-gutter);
+      bottom: clamp(18px, 3vh, 40px);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-weight: 700;
+      color: var(--bs-navy);
+    }
+    .bs-why__bar {
+      flex: 1;
+      height: 4px;
+      border-radius: 4px;
+      background: var(--bs-line);
+      overflow: clip;
+    }
+    .bs-why__bar i {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--bs-blue), var(--bs-blue-d));
+      transform: scaleX(0);
+      transform-origin: 0 50%;
+    }
+    .bs-why__count b {
+      color: var(--bs-blue-d);
     }
   }
 </style>

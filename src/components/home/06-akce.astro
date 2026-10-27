@@ -1,5 +1,6 @@
 ---
 import Icon from '../ui/Icon.astro';
+import Bubbles from '../ui/Bubbles.astro';
 import { pick, URLS, FIRM, type Lang } from '../../i18n';
 import home from '../../i18n/home.json';
 interface Props {
@@ -9,6 +10,12 @@ const t = pick(home, Astro.props.lang);
 ---
 
 <section class="bs-akce bs-dark" id="akce">
+  <Bubbles
+    items={[
+      { s: 360, x: 88, y: 30, tone: 'navy' },
+      { s: 200, x: 64, y: 88, tone: 'navy' },
+    ]}
+  />
   <div class="bs-akce__blob" aria-hidden="true"></div>
   <div class="bs-wrap bs-akce__in">
     <div class="bs-akce__num" data-reveal="pop" aria-hidden="true">

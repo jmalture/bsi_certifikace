@@ -1,5 +1,6 @@
 ---
 import Icon from '../ui/Icon.astro';
+import Ribbon from '../ui/Ribbon.astro';
 import { pick, URLS, type Lang } from '../../i18n';
 import home from '../../i18n/home.json';
 
@@ -9,21 +10,6 @@ interface Props {
 const { lang } = Astro.props;
 const t = pick(home, lang);
 
-// Ribbon waves: one period tile repeated, drifted sideways by CSS. Generated here so the line art stays vector.
-function wave(amp: number, y: number, period = 720, tiles = 5) {
-  let d = `M0 ${y}`;
-  for (let i = 0; i < tiles; i++) {
-    const x = i * period;
-    d += ` C${x + period * 0.25} ${y - amp} ${x + period * 0.25} ${y - amp} ${x + period * 0.5} ${y} S${x + period * 0.75} ${y + amp} ${x + period} ${y}`;
-  }
-  return d;
-}
-const waves = [
-  { d: wave(46, 120), w: 3, o: 0.9, dur: 26, c: 'var(--bs-blue)' },
-  { d: wave(60, 140), w: 2, o: 0.55, dur: 34, c: 'var(--bs-blue-l)' },
-  { d: wave(38, 160), w: 2, o: 0.4, dur: 42, c: 'var(--bs-navy-2)' },
-  { d: wave(72, 128), w: 1.5, o: 0.35, dur: 50, c: 'var(--bs-blue)' },
-];
 const slabs = [
   { y: 372, top: '#ffffff', l: '#06295c', r: '#0079b0' },
   { y: 292, top: '#e6f7ff', l: '#06295c', r: '#0079b0' },
@@ -35,6 +21,7 @@ const lines = [t.hero_h1];
 ---
 
 <section class="bs-hero" id="top" data-live>
+  <Ribbon class="bs-hero__ribbon" />
   <div class="bs-hero__bg" aria-hidden="true">
     <span class="bs-hero__blob bs-hero__blob--a"></span>
     <span class="bs-hero__blob bs-hero__blob--b"></span>
@@ -113,19 +100,13 @@ const lines = [t.hero_h1];
       <span class="bs-chip bs-chip--c">bSI</span>
     </div>
   </div>
-
-  <div class="bs-hero__waves" aria-hidden="true">
-    {
-      waves.map((w) => (
-        <svg viewBox="0 0 3600 260" preserveAspectRatio="none" style={`--dur:${w.dur}s`}>
-          <path d={w.d} fill="none" stroke={w.c} stroke-width={w.w} stroke-opacity={w.o} stroke-linecap="round" />
-        </svg>
-      ))
-    }
-  </div>
 </section>
 
 <style is:global>
+  .bs-hero__ribbon {
+    z-index: -1;
+    opacity: 0.9;
+  }
   .bs-hero {
     position: relative;
     isolation: isolate;
@@ -310,30 +291,6 @@ const lines = [t.hero_h1];
   @keyframes bs-bob {
     50% {
       transform: translateY(-14px);
-    }
-  }
-
-  .bs-hero__waves {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: clamp(150px, 18vw, 260px);
-    z-index: -1;
-    pointer-events: none;
-    overflow: clip;
-  }
-  .bs-hero__waves svg {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    width: 500%;
-    height: 100%;
-    animation: bs-drift var(--dur) linear infinite;
-  }
-  @keyframes bs-drift {
-    to {
-      transform: translateX(-20%);
     }
   }
 

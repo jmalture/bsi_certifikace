@@ -1,5 +1,6 @@
 ---
 import Icon from '../ui/Icon.astro';
+import Bubbles from '../ui/Bubbles.astro';
 import { pick, FIRM, type Lang } from '../../i18n';
 import home from '../../i18n/home.json';
 interface Props {
@@ -9,6 +10,13 @@ const t = pick(home, Astro.props.lang);
 ---
 
 <section class="bs-section bs-kontakt" id="kontakt">
+  <Bubbles
+    items={[
+      { s: 420, x: 90, y: 20, tone: 'sky' },
+      { s: 260, x: 12, y: 82 },
+      { s: 150, x: 55, y: 10 },
+    ]}
+  />
   <div class="bs-wrap bs-kontakt__in">
     <div class="bs-kontakt__copy">
       <p class="bs-kicker" data-reveal>{t.help_kicker}</p>
