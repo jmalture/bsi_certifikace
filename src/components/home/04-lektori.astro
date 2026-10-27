@@ -89,9 +89,11 @@ const t = pick(home, Astro.props.lang);
   .bs-person:nth-child(even) .bs-person__pic {
     border-radius: var(--bs-blob-2);
   }
-  .bs-person:hover .bs-person__pic {
-    border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%;
-    transform: translateY(-6px);
+  @media (hover: hover) {
+    .bs-person:hover .bs-person__pic {
+      border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%;
+      transform: translateY(-6px);
+    }
   }
   .bs-person__pic img {
     width: 100%;
@@ -103,9 +105,11 @@ const t = pick(home, Astro.props.lang);
       scale 1.2s var(--bs-ease),
       filter var(--bs-med) var(--bs-ease);
   }
-  .bs-person:hover .bs-person__pic img {
-    scale: 1.06;
-    filter: none;
+  @media (hover: hover) {
+    .bs-person:hover .bs-person__pic img {
+      scale: 1.06;
+      filter: none;
+    }
   }
   .bs-person h3 {
     font-size: 1.4rem;
@@ -143,12 +147,29 @@ const t = pick(home, Astro.props.lang);
       grid-template-columns: 1fr 1fr;
     }
   }
-  @media (max-width: 560px) {
+  /* phones: swipe through the lecturers instead of one long scroll */
+  @media (max-width: 760px) {
     .bs-lect__grid {
-      grid-template-columns: 1fr;
+      display: flex;
+      gap: 16px;
+      margin-inline: calc(var(--bs-gutter) * -1);
+      padding-inline: var(--bs-gutter);
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--bs-gutter);
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+      padding-bottom: 8px;
+    }
+    .bs-lect__grid::-webkit-scrollbar {
+      display: none;
+    }
+    .bs-person {
+      flex: 0 0 min(78%, 300px);
+      scroll-snap-align: start;
     }
     .bs-person__pic {
-      max-width: 300px;
+      max-width: none;
     }
   }
 </style>
