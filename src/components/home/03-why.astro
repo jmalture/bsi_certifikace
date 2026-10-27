@@ -1,6 +1,5 @@
 ---
 import Icon from '../ui/Icon.astro';
-import Bubbles from '../ui/Bubbles.astro';
 import { pick, URLS, type Lang } from '../../i18n';
 import home from '../../i18n/home.json';
 interface Props {
@@ -11,14 +10,6 @@ const total = String(t.why_points.length).padStart(2, '0');
 ---
 
 <section class="bs-why" id="bimPoint">
-  <Bubbles
-    items={[
-      { s: 520, x: 8, y: 20 },
-      { s: 300, x: 62, y: 86, tone: 'sky' },
-      { s: 420, x: 92, y: 14, tone: 'sky' },
-      { s: 180, x: 40, y: 8 },
-    ]}
-  />
   <div class="bs-wrap bs-why__in">
     <div class="bs-why__intro">
       <p class="bs-kicker" data-reveal>{t.why_kicker}</p>
@@ -30,18 +21,21 @@ const total = String(t.why_points.length).padStart(2, '0');
       </a>
     </div>
 
-    <div class="bs-why__bubs">
+    <ol class="bs-why__list">
       {
         t.why_points.map((p, i) => (
-          <article class="bs-bub" style={`--k:${i}`} data-reveal="pop" tabindex="0">
-            <span class="bs-bub__n" aria-hidden="true">
+          <li class="bs-pt" style={`--k:${i}`} data-reveal tabindex="0">
+            <span class="bs-pt__n" aria-hidden="true">
               {String(i + 1).padStart(2, '0')}
             </span>
             <p>{p}</p>
-          </article>
+            <span class="bs-pt__go" aria-hidden="true">
+              <Icon name="arrow" size={20} />
+            </span>
+          </li>
         ))
       }
-    </div>
+    </ol>
   </div>
 </section>
 
@@ -69,121 +63,111 @@ const total = String(t.why_points.length).padStart(2, '0');
     line-height: 1.6;
     color: var(--bs-navy);
   }
-  .bs-why__bubs {
-    display: grid;
-    gap: 24px;
-    justify-items: center;
+  .bs-why__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: pt;
   }
-
-  /* Bubbles: soft morphing blobs with the text inside; hover or focus fills one navy */
-  .bs-bub {
+  .bs-pt {
     position: relative;
     display: grid;
-    align-content: center;
-    --w: min(86vw, 380px);
-    width: var(--w);
-    aspect-ratio: 1;
-    padding: calc(var(--w) * 0.15);
-    border-radius: var(--bs-blob);
-    background: linear-gradient(150deg, #fff 0%, var(--bs-sky-2) 60%, var(--bs-sky) 130%);
-    border: 1.5px solid var(--bs-line);
-    box-shadow: var(--bs-shadow);
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: clamp(16px, 3vw, 40px);
+    padding: clamp(22px, 2.6vw, 34px) clamp(16px, 2vw, 28px);
+    border-radius: 14px;
     color: var(--bs-ink);
     outline: none;
-    animation: bs-bub-morph 14s ease-in-out infinite alternate;
-    animation-delay: calc(var(--k) * -3s);
-    transition:
-      background-color var(--bs-slow) var(--bs-ease),
-      color var(--bs-med) var(--bs-ease),
-      box-shadow var(--bs-med) var(--bs-ease),
-      scale var(--bs-slow) var(--bs-ease),
-      opacity var(--bs-slow) var(--bs-ease),
-      translate var(--bs-slow) var(--bs-ease);
-    transition-delay: calc(var(--k) * 70ms), 0s, 0s, 0s, calc(var(--k) * 70ms), calc(var(--k) * 70ms);
+    isolation: isolate;
+    overflow: clip;
   }
-  .bs-bub:nth-of-type(even) {
-    border-radius: var(--bs-blob-2);
-  }
-  @keyframes bs-bub-morph {
-    50% {
-      border-radius: var(--bs-blob-2);
-    }
-    100% {
-      border-radius: 58% 42% 40% 60% / 44% 56% 44% 56%;
-    }
-  }
-  .bs-bub p {
-    font-size: clamp(0.95rem, 0.9rem + 0.25vw, 1.08rem);
-    line-height: 1.55;
-  }
-  .bs-bub__n {
-    position: absolute;
-    top: 8%;
-    left: 8%;
-    display: grid;
-    place-items: center;
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    background: var(--bs-blue);
-    color: #fff;
-    font-weight: 800;
-    font-size: 1.05rem;
-    box-shadow: 0 10px 24px rgba(0, 156, 221, 0.4);
-  }
-  .bs-bub::before,
-  .bs-bub::after {
+  /* hairline above each row draws in from the left */
+  .bs-pt::before {
     content: '';
     position: absolute;
-    border-radius: 50%;
-    background: var(--bs-blue);
-    opacity: 0.18;
-    animation: bs-float 7s ease-in-out infinite alternate;
+    inset: 0 0 auto 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--bs-blue), var(--bs-line) 60%);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: transform 1.2s var(--bs-ease);
+    transition-delay: calc(var(--k) * 90ms + 200ms);
   }
-  .bs-bub::before {
-    width: 38px;
-    height: 38px;
-    right: 6%;
-    top: 10%;
+  .bs-pt.is-in::before {
+    transform: scaleX(1);
   }
-  .bs-bub::after {
-    width: 18px;
-    height: 18px;
-    right: 18%;
-    bottom: 6%;
-    animation-delay: -3s;
+  .bs-pt:last-child {
+    border-bottom: 2px solid var(--bs-line);
+    border-radius: 14px 14px 0 0;
   }
-  @keyframes bs-float {
-    to {
-      transform: translate(-8px, -16px);
-    }
+  /* navy fill slides in from the left */
+  .bs-pt::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(100deg, var(--bs-navy) 0%, var(--bs-navy-2) 100%);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: transform 0.7s var(--bs-ease);
   }
-  .bs-bub:hover,
-  .bs-bub:focus-visible {
-    background: linear-gradient(150deg, var(--bs-navy-2) 0%, var(--bs-navy) 100%);
-    color: #fff;
-    border-color: transparent;
-    box-shadow: var(--bs-shadow-lg);
+  .bs-pt:hover::after,
+  .bs-pt:focus-visible::after {
+    transform: scaleX(1);
   }
-  .bs-bub:hover p,
-  .bs-bub:focus-visible p {
-    color: #fff;
-  }
-
-  .js .bs-bub[data-reveal] {
+  .bs-pt__n {
+    min-width: 2.3ch;
+    font-size: clamp(2.6rem, 2rem + 2.6vw, 4.4rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--bs-blue);
     transition:
-      background-color var(--bs-slow) var(--bs-ease),
       color var(--bs-med) var(--bs-ease),
-      box-shadow var(--bs-med) var(--bs-ease),
-      opacity var(--bs-slow) var(--bs-ease),
-      translate var(--bs-slow) var(--bs-ease),
-      scale var(--bs-slow) var(--bs-ease);
-    transition-delay: 0s, 0s, 0s, calc(var(--k) * 90ms), calc(var(--k) * 90ms), calc(var(--k) * 90ms);
+      -webkit-text-stroke-color var(--bs-med) var(--bs-ease);
   }
-  .js .bs-bub.is-in:hover,
-  .js .bs-bub.is-in:focus-visible {
-    scale: 1.05;
-    transition-delay: 0s;
+  .bs-pt p {
+    margin: 0;
+    font-size: clamp(1rem, 0.95rem + 0.3vw, 1.18rem);
+    line-height: 1.55;
+    transition: color var(--bs-med) var(--bs-ease);
+  }
+  .bs-pt__go {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    color: var(--bs-blue);
+    opacity: 0.55;
+    transition:
+      transform var(--bs-med) var(--bs-ease),
+      color var(--bs-med) var(--bs-ease),
+      opacity var(--bs-med) var(--bs-ease);
+  }
+  .bs-pt:hover .bs-pt__n,
+  .bs-pt:focus-visible .bs-pt__n {
+    color: var(--bs-blue);
+    -webkit-text-stroke-color: var(--bs-blue);
+  }
+  .bs-pt:hover p,
+  .bs-pt:focus-visible p {
+    color: #fff;
+  }
+  .bs-pt:hover .bs-pt__go,
+  .bs-pt:focus-visible .bs-pt__go {
+    transform: translateX(6px);
+    color: #fff;
+    opacity: 1;
+  }
+  @media (max-width: 560px) {
+    .bs-pt {
+      grid-template-columns: auto 1fr;
+    }
+    .bs-pt__go {
+      display: none;
+    }
   }
 
   @media (min-width: 901px) {
@@ -194,20 +178,6 @@ const total = String(t.why_points.length).padStart(2, '0');
     .bs-why__intro {
       position: sticky;
       top: calc(var(--bs-header-h, 84px) + 40px);
-    }
-    .bs-why__bubs {
-      grid-template-columns: 1fr 1fr;
-      gap: 28px clamp(8px, 2vw, 28px);
-    }
-    .bs-bub {
-      --w: min(100%, 400px);
-    }
-    .bs-bub:nth-of-type(even) {
-      margin-top: 72px;
-    }
-    .bs-bub:nth-of-type(5) {
-      grid-column: 1 / -1;
-      margin-top: -20px;
     }
   }
 </style>
