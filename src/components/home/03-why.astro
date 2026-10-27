@@ -10,7 +10,7 @@ const t = pick(home, Astro.props.lang);
 const total = String(t.why_points.length).padStart(2, '0');
 ---
 
-<section class="bs-why" id="bimPoint" data-hscroll>
+<section class="bs-why" id="bimPoint">
   <Bubbles
     items={[
       { s: 520, x: 8, y: 20 },
@@ -19,27 +19,21 @@ const total = String(t.why_points.length).padStart(2, '0');
       { s: 180, x: 40, y: 8 },
     ]}
   />
-  <div class="bs-why__sticky">
-    <div class="bs-why__track" data-track>
-      <svg class="bs-why__line" aria-hidden="true" data-line>
-        <path d="" fill="none" stroke="var(--bs-blue)" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 12"
-        ></path>
-        <path d="" fill="none" stroke="var(--bs-blue)" stroke-width="4" stroke-linecap="round" data-draw></path>
-      </svg>
+  <div class="bs-wrap bs-why__in">
+    <div class="bs-why__intro">
+      <p class="bs-kicker" data-reveal>{t.why_kicker}</p>
+      <h2 class="bs-h2 bs-lines"><span class="bs-line"><span>{t.why_h2}</span></span></h2>
+      <p class="bs-why__lead" data-reveal style="--i:1">{t.why_lead}</p>
+      <a class="bs-btn bs-btn--blue" href={URLS.bimpoint} target="_blank" rel="noopener" data-reveal style="--i:2">
+        {t.why_cta}
+        <Icon name="arrow" size={18} />
+      </a>
+    </div>
 
-      <div class="bs-why__intro">
-        <p class="bs-kicker" data-reveal>{t.why_kicker}</p>
-        <h2 class="bs-h2 bs-lines"><span class="bs-line"><span>{t.why_h2}</span></span></h2>
-        <p class="bs-why__lead" data-reveal style="--i:1">{t.why_lead}</p>
-        <a class="bs-btn bs-btn--blue" href={URLS.bimpoint} target="_blank" rel="noopener" data-reveal style="--i:2">
-          {t.why_cta}
-          <Icon name="arrow" size={18} />
-        </a>
-      </div>
-
+    <div class="bs-why__bubs">
       {
         t.why_points.map((p, i) => (
-          <article class="bs-bub" style={`--k:${i}`} data-bub>
+          <article class="bs-bub" style={`--k:${i}`} data-reveal="pop" tabindex="0">
             <span class="bs-bub__n" aria-hidden="true">
               {String(i + 1).padStart(2, '0')}
             </span>
@@ -48,134 +42,26 @@ const total = String(t.why_points.length).padStart(2, '0');
         ))
       }
     </div>
-
-    <div class="bs-why__prog" aria-hidden="true">
-      <span class="bs-why__bar"><i data-bar></i></span>
-      <span class="bs-why__count"><b data-cur>01</b> / {total}</span>
-    </div>
   </div>
 </section>
-
-<script>
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const desk = matchMedia('(min-width: 901px)');
-
-  document.querySelectorAll<HTMLElement>('[data-hscroll]').forEach((sec) => {
-    const track = sec.querySelector<HTMLElement>('[data-track]')!;
-    const bubs = [...sec.querySelectorAll<HTMLElement>('[data-bub]')];
-    const svg = sec.querySelector<SVGSVGElement>('[data-line]')!;
-    const [dash, draw] = [...svg.querySelectorAll<SVGPathElement>('path')];
-    const bar = sec.querySelector<HTMLElement>('[data-bar]')!;
-    const cur = sec.querySelector<HTMLElement>('[data-cur]')!;
-    let dist = 0;
-    let len = 1;
-    let pinned = false;
-    let ticking = false;
-
-    const layout = () => {
-      pinned = desk.matches && !reduce;
-      sec.classList.toggle('is-pinned', pinned);
-      track.style.transform = '';
-      if (!pinned) {
-        sec.style.height = '';
-        return;
-      }
-      dist = Math.max(0, track.scrollWidth - innerWidth + parseFloat(getComputedStyle(track).paddingRight));
-      sec.style.height = dist + innerHeight + 'px';
-      // path through the bubble centres
-      const pts = bubs.map((b) => [b.offsetLeft + b.offsetWidth / 2, b.offsetTop + b.offsetHeight / 2]);
-      const h = track.clientHeight;
-      svg.setAttribute('width', String(track.scrollWidth));
-      svg.setAttribute('height', String(h));
-      let d = `M ${track.querySelector<HTMLElement>('.bs-why__intro')!.offsetWidth * 0.6} ${h * 0.55}`;
-      let px = parseFloat(d.split(' ')[1]);
-      let py = h * 0.55;
-      pts.forEach(([x, y]) => {
-        const mx = (px + x) / 2;
-        d += ` C ${mx} ${py}, ${mx} ${y}, ${x} ${y}`;
-        px = x;
-        py = y;
-      });
-      dash.setAttribute('d', d);
-      draw.setAttribute('d', d);
-      len = draw.getTotalLength();
-      draw.style.strokeDasharray = `${len}`;
-      update();
-    };
-
-    const update = () => {
-      ticking = false;
-      if (!pinned) return;
-      const p = Math.min(1, Math.max(0, (scrollY - sec.offsetTop) / Math.max(1, sec.offsetHeight - innerHeight)));
-      track.style.transform = `translate3d(${-p * dist}px,0,0)`;
-      draw.style.strokeDashoffset = String(len * (1 - Math.min(1, p * 1.04)));
-      bar.style.transform = `scaleX(${p})`;
-      // active bubble = the one nearest to 55 % of the viewport width
-      let best = 0;
-      let bd = Infinity;
-      bubs.forEach((b, i) => {
-        const r = b.getBoundingClientRect();
-        const dd = Math.abs(r.left + r.width / 2 - innerWidth * 0.55);
-        if (dd < bd) {
-          bd = dd;
-          best = i;
-        }
-      });
-      bubs.forEach((b, i) => b.classList.toggle('is-active', i === best));
-      cur.textContent = String(best + 1).padStart(2, '0');
-    };
-
-    addEventListener(
-      'scroll',
-      () => {
-        if (!ticking) {
-          ticking = true;
-          requestAnimationFrame(update);
-        }
-      },
-      { passive: true },
-    );
-    addEventListener('resize', layout);
-    desk.addEventListener('change', layout);
-    document.fonts?.ready.then(layout);
-    layout();
-  });
-</script>
 
 <style is:global>
   .bs-why {
     position: relative;
+    padding-block: clamp(72px, 9vw, 130px);
     background: linear-gradient(180deg, #fff 0%, var(--bs-mist) 100%);
+    overflow: clip;
   }
-  .bs-why__sticky {
+  .bs-why__in {
     position: relative;
     z-index: 1;
-    padding-block: clamp(72px, 9vw, 130px);
-  }
-  .bs-why__track {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: clamp(28px, 4vw, 64px);
-    padding-inline: var(--bs-gutter);
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-    padding-bottom: 12px;
-  }
-  .bs-why__track::-webkit-scrollbar {
-    display: none;
-  }
-  .bs-why__line,
-  .bs-why__prog {
-    display: none;
+    display: grid;
+    gap: clamp(40px, 5vw, 72px);
   }
   .bs-why__intro {
-    flex: none;
     display: grid;
     justify-items: start;
-    width: min(88vw, 520px);
-    scroll-snap-align: start;
+    align-content: start;
   }
   .bs-why__lead {
     margin: 24px 0 32px;
@@ -183,14 +69,18 @@ const total = String(t.why_points.length).padStart(2, '0');
     line-height: 1.6;
     color: var(--bs-navy);
   }
+  .bs-why__bubs {
+    display: grid;
+    gap: 24px;
+    justify-items: center;
+  }
 
-  /* The bubbles: big soft blobs, text inside, morphing slowly; the active one fills navy */
+  /* Bubbles: soft morphing blobs with the text inside; hover or focus fills one navy */
   .bs-bub {
     position: relative;
-    flex: none;
     display: grid;
     align-content: center;
-    --w: min(78vw, 360px);
+    --w: min(86vw, 380px);
     width: var(--w);
     aspect-ratio: 1;
     padding: calc(var(--w) * 0.15);
@@ -199,14 +89,17 @@ const total = String(t.why_points.length).padStart(2, '0');
     border: 1.5px solid var(--bs-line);
     box-shadow: var(--bs-shadow);
     color: var(--bs-ink);
-    scroll-snap-align: center;
+    outline: none;
     animation: bs-bub-morph 14s ease-in-out infinite alternate;
     animation-delay: calc(var(--k) * -3s);
     transition:
       background-color var(--bs-slow) var(--bs-ease),
       color var(--bs-med) var(--bs-ease),
       box-shadow var(--bs-med) var(--bs-ease),
-      scale var(--bs-slow) var(--bs-ease);
+      scale var(--bs-slow) var(--bs-ease),
+      opacity var(--bs-slow) var(--bs-ease),
+      translate var(--bs-slow) var(--bs-ease);
+    transition-delay: calc(var(--k) * 70ms), 0s, 0s, 0s, calc(var(--k) * 70ms), calc(var(--k) * 70ms);
   }
   .bs-bub:nth-of-type(even) {
     border-radius: var(--bs-blob-2);
@@ -265,90 +158,56 @@ const total = String(t.why_points.length).padStart(2, '0');
       transform: translate(-8px, -16px);
     }
   }
+  .bs-bub:hover,
+  .bs-bub:focus-visible {
+    background: linear-gradient(150deg, var(--bs-navy-2) 0%, var(--bs-navy) 100%);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: var(--bs-shadow-lg);
+  }
+  .bs-bub:hover p,
+  .bs-bub:focus-visible p {
+    color: #fff;
+  }
+
+  .js .bs-bub[data-reveal] {
+    transition:
+      background-color var(--bs-slow) var(--bs-ease),
+      color var(--bs-med) var(--bs-ease),
+      box-shadow var(--bs-med) var(--bs-ease),
+      opacity var(--bs-slow) var(--bs-ease),
+      translate var(--bs-slow) var(--bs-ease),
+      scale var(--bs-slow) var(--bs-ease);
+    transition-delay: 0s, 0s, 0s, calc(var(--k) * 90ms), calc(var(--k) * 90ms), calc(var(--k) * 90ms);
+  }
+  .js .bs-bub.is-in:hover,
+  .js .bs-bub.is-in:focus-visible {
+    scale: 1.05;
+    transition-delay: 0s;
+  }
 
   @media (min-width: 901px) {
-    .bs-why.is-pinned {
-      /* height is set by the script: distance to scroll + one viewport */
+    .bs-why__in {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+      align-items: start;
     }
-    .bs-why.is-pinned .bs-why__sticky {
+    .bs-why__intro {
       position: sticky;
-      top: 0;
-      height: 100svh;
-      display: grid;
-      align-content: center;
-      padding-block: 0;
-      overflow: clip;
+      top: calc(var(--bs-header-h, 84px) + 40px);
     }
-    .bs-why.is-pinned .bs-why__track {
-      overflow: visible;
-      scroll-snap-type: none;
-      width: max-content;
-      height: min(78svh, 700px);
-      padding-right: clamp(60px, 10vw, 180px);
-      will-change: transform;
+    .bs-why__bubs {
+      grid-template-columns: 1fr 1fr;
+      gap: 28px clamp(8px, 2vw, 28px);
     }
-    .bs-why.is-pinned .bs-bub {
-      --w: clamp(300px, 27vw, 410px);
+    .bs-bub {
+      --w: min(100%, 400px);
     }
-    .bs-why.is-pinned .bs-bub:nth-of-type(odd) {
-      translate: 0 -9%;
+    .bs-bub:nth-of-type(even) {
+      margin-top: 72px;
     }
-    .bs-why.is-pinned .bs-bub:nth-of-type(even) {
-      translate: 0 9%;
-    }
-    .bs-why.is-pinned .bs-bub.is-active {
-      background: linear-gradient(150deg, var(--bs-navy-2) 0%, var(--bs-navy) 100%);
-      color: #fff;
-      border-color: transparent;
-      box-shadow: var(--bs-shadow-lg);
-      scale: 1.07;
-    }
-    .bs-why.is-pinned .bs-bub.is-active p {
-      color: #fff;
-    }
-    .bs-why.is-pinned .bs-why__line {
-      display: block;
-      position: absolute;
-      left: 0;
-      top: 0;
-      z-index: 0;
-      pointer-events: none;
-      overflow: visible;
-    }
-    .bs-why.is-pinned .bs-why__line path:first-child {
-      opacity: 0.3;
-    }
-    .bs-why.is-pinned .bs-bub,
-    .bs-why.is-pinned .bs-why__intro {
-      z-index: 1;
-    }
-    .bs-why.is-pinned .bs-why__prog {
-      position: absolute;
-      left: var(--bs-gutter);
-      right: var(--bs-gutter);
-      bottom: clamp(18px, 3vh, 40px);
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      font-weight: 700;
-      color: var(--bs-navy);
-    }
-    .bs-why__bar {
-      flex: 1;
-      height: 4px;
-      border-radius: 4px;
-      background: var(--bs-line);
-      overflow: clip;
-    }
-    .bs-why__bar i {
-      display: block;
-      height: 100%;
-      background: linear-gradient(90deg, var(--bs-blue), var(--bs-blue-d));
-      transform: scaleX(0);
-      transform-origin: 0 50%;
-    }
-    .bs-why__count b {
-      color: var(--bs-blue-d);
+    .bs-bub:nth-of-type(5) {
+      grid-column: 1 / -1;
+      margin-top: -20px;
     }
   }
 </style>
