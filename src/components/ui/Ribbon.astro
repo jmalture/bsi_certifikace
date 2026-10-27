@@ -2,12 +2,18 @@
 interface Props {
   /** extra class on the wrapper (position it in the parent) */
   class?: string;
+  /** line colour as "r,g,b" */
+  rgb?: string;
+  /** mirror: 'y' hangs the arch from the top, 'x' mirrors left-right, 'xy' both */
+  flip?: '' | 'x' | 'y' | 'xy';
+  /** time offset in s, so several ribbons are not in sync */
+  seed?: number;
 }
-const { class: cls = '' } = Astro.props;
+const { class: cls = '', rgb = '0,156,221', flip = '', seed = 0 } = Astro.props;
 ---
 
-<div class:list={['bs-ribbon', cls]} aria-hidden="true">
-  <canvas data-ribbon></canvas>
+<div class:list={['bs-ribbon', cls, flip && `bs-ribbon--${flip}`]} aria-hidden="true">
+  <canvas data-ribbon data-rgb={rgb} data-seed={seed}></canvas>
 </div>
 
 <script>
@@ -32,7 +38,8 @@ const { class: cls = '' } = Astro.props;
     let raf = 0;
     let running = false;
     let t0 = performance.now();
-    const rgb = '0,156,221';
+    const rgb = cv.dataset.rgb || '0,156,221';
+    const seed = Number(cv.dataset.seed || 0);
 
     const resize = () => {
       dpr = Math.min(2, devicePixelRatio || 1);
@@ -59,7 +66,7 @@ const { class: cls = '' } = Astro.props;
     };
 
     const draw = (now: number) => {
-      const t = reduce ? 3.2 : (now - t0) / 1000;
+      const t = reduce ? 3.2 : (now - t0) / 1000 + seed;
       ctx.clearRect(0, 0, w, h);
       ctx.lineWidth = 1;
       for (let i = 0; i < N; i++) {
@@ -116,9 +123,30 @@ const { class: cls = '' } = Astro.props;
     -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 78%, transparent 100%);
     mask-image: linear-gradient(180deg, transparent 0%, #000 22%, #000 78%, transparent 100%);
   }
+  .bs-ribbon--y canvas {
+    transform: scaleY(-1);
+  }
+  .bs-ribbon--x canvas {
+    transform: scaleX(-1);
+  }
+  .bs-ribbon--xy canvas {
+    transform: scale(-1, -1);
+  }
   .bs-ribbon canvas {
     width: 100%;
     height: 100%;
     display: block;
+  }
+</style>
+
+<style is:global>
+  /* ribbons used as quiet section backgrounds */
+  .bs-sec-ribbon {
+    opacity: 0.55;
+    z-index: 0;
+  }
+  .bs-sec-ribbon ~ .bs-wrap {
+    position: relative;
+    z-index: 1;
   }
 </style>

@@ -1,6 +1,8 @@
 ---
 import Icon from '../ui/Icon.astro';
 import Bubbles from '../ui/Bubbles.astro';
+import Rise from '../ui/Rise.astro';
+import Ribbon from '../ui/Ribbon.astro';
 import { pick, type Lang } from '../../i18n';
 import home from '../../i18n/home.json';
 interface Props {
@@ -10,6 +12,8 @@ const t = pick(home, Astro.props.lang);
 ---
 
 <section class="bs-section bs-dark bs-lect" id="lektori">
+  <Ribbon class="bs-sec-ribbon" rgb="120,200,255" seed={4} flip="y" />
+  <Rise tone="dark" n={12} rings={[{ x: 80, y: 30, s: 520 }]} />
   <div class="bs-lect__ring" aria-hidden="true"></div>
   <Bubbles
     items={[

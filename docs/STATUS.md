@@ -20,3 +20,4 @@ Registrace / Přihlášení point to the live bsicertifikace.cz pages.
 - Lecturer portraits upscaled 4x with Magnific (`ultra-sublime`), 338 and 676 px webp.
 - Školení → Zkouška → Certifikát: dark "journey" band with orbs, ripples and a travelling glow.
 - Hero background: live canvas ribbon (`ui/Ribbon.astro`), a remake of vlny-1.svg; pauses off screen, static under reduced motion.
+- Livelier backgrounds (round 3): `ui/Rise.astro` (rising soap bubbles + sonar rings), `Bubbles` now drift more and move with scroll, the hero ribbon is reused as a quiet background (`Ribbon` props `rgb`, `flip`, `seed`) in Lektoři, Certifikace, Akce, Kontakt; bubbles and rings also in Proč s námi.

@@ -1,0 +1,138 @@
+---
+/** Soap-bubble sprites rising through a section (round elements like the original site), plus optional sonar rings.
+ *  Place as the first child of a positioned section; content needs position:relative above it (see .bs-rise ~ .bs-wrap). */
+interface Props {
+  n?: number;
+  tone?: 'light' | 'dark';
+  rings?: { x: number; y: number; s: number }[];
+}
+const { n = 14, tone = 'light', rings = [] } = Astro.props;
+const bub = Array.from({ length: n }, (_, i) => {
+  const r = (k: number) => ((i * k + 7) % 17) / 17;
+  return {
+    s: Math.round(10 + r(5) * 40),
+    x: Math.round(3 + r(11) * 94),
+    dur: (16 + r(7) * 18).toFixed(1),
+    del: (-r(13) * 30).toFixed(1),
+    sway: Math.round(14 + r(3) * 34),
+  };
+});
+---
+
+<div class={`bs-rise bs-rise--${tone}`} aria-hidden="true">
+  {
+    rings.map((r, i) => (
+      <span class="bs-ring" style={`--x:${r.x}%;--y:${r.y}%;--s:${r.s}px;--d:${i * -2.3}s`}>
+        <i />
+        <i />
+        <i />
+      </span>
+    ))
+  }
+  {
+    bub.map((b) => (
+      <span class="bs-rise__b" style={`--s:${b.s}px;--x:${b.x}%;--dur:${b.dur}s;--del:${b.del}s;--sw:${b.sway}px`}>
+        <i />
+      </span>
+    ))
+  }
+</div>
+
+<style is:global>
+  .bs-rise {
+    position: absolute;
+    inset: 0;
+    overflow: clip;
+    pointer-events: none;
+    z-index: 0;
+    --c: 0, 156, 221;
+  }
+  .bs-rise--dark {
+    --c: 140, 215, 255;
+  }
+  .bs-rise ~ .bs-wrap {
+    position: relative;
+    z-index: 1;
+  }
+  .bs-rise__b {
+    position: absolute;
+    left: var(--x);
+    bottom: -80px;
+    width: var(--s);
+    aspect-ratio: 1;
+    animation: bs-rise var(--dur) linear infinite;
+    animation-delay: var(--del);
+  }
+  .bs-rise__b i {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 1.5px solid rgba(var(--c), 0.38);
+    background:
+      radial-gradient(circle at 30% 28%, rgba(255, 255, 255, 0.7) 0 9%, transparent 11%),
+      radial-gradient(circle at 50% 50%, rgba(var(--c), 0.05) 0 55%, rgba(var(--c), 0.16) 100%);
+    animation: bs-sway calc(var(--dur) / 3) ease-in-out infinite alternate;
+    animation-delay: var(--del);
+  }
+  @keyframes bs-rise {
+    0% {
+      translate: 0 0;
+      opacity: 0;
+    }
+    8% {
+      opacity: 1;
+    }
+    88% {
+      opacity: 1;
+    }
+    100% {
+      translate: 0 calc(-100cqh - 160px);
+      opacity: 0;
+    }
+  }
+  @keyframes bs-sway {
+    to {
+      transform: translateX(var(--sw)) scale(1.08);
+    }
+  }
+  .bs-ring {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: var(--s);
+    aspect-ratio: 1;
+    translate: -50% -50%;
+  }
+  .bs-ring i {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1.5px solid rgba(var(--c), 0.4);
+    opacity: 0;
+    animation: bs-ripple-bg 9s ease-out infinite;
+    animation-delay: calc(var(--d) + var(--k, 0) * 3s);
+  }
+  .bs-ring i:nth-child(2) {
+    --k: 1;
+  }
+  .bs-ring i:nth-child(3) {
+    --k: 2;
+  }
+  @keyframes bs-ripple-bg {
+    0% {
+      transform: scale(0.15);
+      opacity: 0;
+    }
+    15% {
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 0;
+    }
+  }
+  .bs-rise {
+    container-type: size;
+  }
+</style>
