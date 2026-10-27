@@ -137,6 +137,18 @@ const { class: cls = '', rgb = '0,156,221', flip = '', seed = 0 } = Astro.props;
     height: 100%;
     display: block;
   }
+  /* phones: draw the ribbon wider than the screen and show its middle, so the waves are not squeezed */
+  @media (max-width: 760px) {
+    .bs-ribbon {
+      overflow: clip;
+    }
+    .bs-ribbon canvas {
+      position: absolute;
+      left: 50%;
+      translate: -50% 0;
+      width: 260%;
+    }
+  }
 </style>
 
 <style is:global>
