@@ -12,7 +12,6 @@ const t = pick(home, Astro.props.lang);
 
 <section class="bs-section bs-dark bs-lect" id="lektori">
   <Ribbon class="bs-sec-ribbon" rgb="120,200,255" seed={4} flip="y" />
-  <div class="bs-lect__ring" aria-hidden="true"></div>
   <Bubbles
     items={[
       { s: 380, x: 6, y: 90, tone: 'navy' },
@@ -61,24 +60,6 @@ const t = pick(home, Astro.props.lang);
   .bs-lect {
     overflow: clip;
     background: linear-gradient(160deg, var(--bs-navy) 0%, var(--bs-navy-d) 100%);
-  }
-  .bs-lect__ring {
-    position: absolute;
-    width: 70vmax;
-    aspect-ratio: 1;
-    right: -30vmax;
-    top: -22vmax;
-    border-radius: 50%;
-    border: 2px solid rgba(0, 156, 221, 0.25);
-    box-shadow:
-      inset 0 0 0 80px rgba(0, 156, 221, 0.04),
-      inset 0 0 0 160px rgba(0, 156, 221, 0.03);
-    animation: bs-spin 90s linear infinite;
-  }
-  @keyframes bs-spin {
-    to {
-      transform: rotate(360deg);
-    }
   }
   .bs-lect__grid {
     list-style: none;
