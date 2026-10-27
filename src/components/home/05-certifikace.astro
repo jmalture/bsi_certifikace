@@ -1,7 +1,6 @@
 ---
 import Icon from '../ui/Icon.astro';
 import Bubbles from '../ui/Bubbles.astro';
-import Ribbon from '../ui/Ribbon.astro';
 import { pick, type Lang } from '../../i18n';
 import home from '../../i18n/home.json';
 interface Props {
@@ -11,11 +10,10 @@ const t = pick(home, Astro.props.lang);
 ---
 
 <section class="bs-section bs-cert" id="certifikace">
-  <Ribbon class="bs-sec-ribbon" seed={9} />
   <Bubbles
     items={[
-      { s: 460, x: 94, y: 22, tone: 'sky' },
-      { s: 300, x: 4, y: 78 },
+      { s: 260, x: 86, y: 28, tone: 'sky' },
+      { s: 260, x: 14, y: 72 },
       { s: 160, x: 50, y: 48 },
     ]}
   />
