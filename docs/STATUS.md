@@ -15,7 +15,7 @@ Registrace / Přihlášení point to the live bsicertifikace.cz pages.
 - Next: di5-tech.cz front page (keep its 3D models).
 
 ## Round 2 (feedback)
-- "Proč s námi": pinned horizontal scroll of morphing bubbles with drawn line and progress counter (scroll-snap rail below 901px).
+- "Proč s námi": reverted to the first version (word-lit lead + numbered cards). The side-scroll bubbles and the outline-number list were tried and dropped.
 - Bubbles (`ui/Bubbles.astro`) across sections, like the original site.
 - Lecturer portraits upscaled 4x with Magnific (`ultra-sublime`), 338 and 676 px webp.
 - Školení → Zkouška → Certifikát: dark "journey" band with orbs, ripples and a travelling glow.
