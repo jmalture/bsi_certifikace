@@ -1,0 +1,352 @@
+---
+import Icon from '../ui/Icon.astro';
+import { pick, URLS, type Lang } from '../../i18n';
+import home from '../../i18n/home.json';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = pick(home, lang);
+
+// Ribbon waves: one period tile repeated, drifted sideways by CSS. Generated here so the line art stays vector.
+function wave(amp: number, y: number, period = 720, tiles = 5) {
+  let d = `M0 ${y}`;
+  for (let i = 0; i < tiles; i++) {
+    const x = i * period;
+    d += ` C${x + period * 0.25} ${y - amp} ${x + period * 0.25} ${y - amp} ${x + period * 0.5} ${y} S${x + period * 0.75} ${y + amp} ${x + period} ${y}`;
+  }
+  return d;
+}
+const waves = [
+  { d: wave(46, 120), w: 3, o: 0.9, dur: 26, c: 'var(--bs-blue)' },
+  { d: wave(60, 140), w: 2, o: 0.55, dur: 34, c: 'var(--bs-blue-l)' },
+  { d: wave(38, 160), w: 2, o: 0.4, dur: 42, c: 'var(--bs-navy-2)' },
+  { d: wave(72, 128), w: 1.5, o: 0.35, dur: 50, c: 'var(--bs-blue)' },
+];
+const slabs = [
+  { y: 372, top: '#ffffff', l: '#06295c', r: '#0079b0' },
+  { y: 292, top: '#e6f7ff', l: '#06295c', r: '#0079b0' },
+  { y: 212, top: '#c8efff', l: '#06295c', r: '#0079b0' },
+  { y: 132, top: '#52c8f8', l: '#001e47', r: '#009cdd' },
+];
+const th = 26;
+const lines = [t.hero_h1];
+---
+
+<section class="bs-hero" id="top" data-live>
+  <div class="bs-hero__bg" aria-hidden="true">
+    <span class="bs-hero__blob bs-hero__blob--a"></span>
+    <span class="bs-hero__blob bs-hero__blob--b"></span>
+  </div>
+
+  <div class="bs-wrap bs-hero__in">
+    <div class="bs-hero__copy">
+      <p class="bs-kicker" data-reveal style="--i:0">{t.hero_kicker}</p>
+      <h1 class="bs-h1 bs-lines bs-hero__h1" aria-label={t.hero_h1}>
+        {
+          lines.map((l, i) => (
+            <span class="bs-line" style={`--l:${i}`}>
+              <span class="bs-grad">{l}</span>
+            </span>
+          ))
+        }
+      </h1>
+      <p class="bs-lead bs-hero__lead" data-reveal style="--i:2">{t.hero_lead}</p>
+      <div class="bs-hero__cta" data-reveal style="--i:3">
+        <a class="bs-btn" href={URLS.registrace}>{t.hero_cta} <Icon name="arrow" size={18} /></a>
+        <a class="bs-hero__badge" href={URLS.registrace}>
+          <span class="bs-hero__dot" aria-hidden="true"></span>{t.hero_badge}
+        </a>
+      </div>
+    </div>
+
+    <div class="bs-hero__scene" role="img" aria-label={t.hero_scene_label} data-reveal="pop" style="--i:2">
+      <svg viewBox="0 0 560 520" class="bs-scene" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="bs-glow" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#009cdd" stop-opacity="0.55"></stop>
+            <stop offset="1" stop-color="#009cdd" stop-opacity="0"></stop>
+          </linearGradient>
+          <pattern
+            id="bs-grid"
+            width="40"
+            height="40"
+            patternUnits="userSpaceOnUse"
+            patternTransform="skewX(-30) scale(1,.58)"
+          >
+            <path d="M40 0H0V40" fill="none" stroke="#001e47" stroke-opacity=".16" stroke-width="1.5"></path>
+          </pattern>
+        </defs>
+        <ellipse cx="280" cy="470" rx="210" ry="38" fill="url(#bs-glow)" class="bs-scene__shadow"></ellipse>
+        <line
+          x1="280"
+          y1="70"
+          x2="280"
+          y2="450"
+          stroke="#009cdd"
+          stroke-width="2"
+          stroke-dasharray="3 9"
+          stroke-linecap="round"
+          class="bs-scene__axis"></line>
+        {
+          slabs.map((s, i) => (
+            <g class="bs-slab" style={`--n:${slabs.length - 1 - i}`}>
+              <polygon points={`80,${s.y} 280,${s.y + 70} 280,${s.y + 70 + th} 80,${s.y + th}`} fill={s.l} />
+              <polygon points={`480,${s.y} 280,${s.y + 70} 280,${s.y + 70 + th} 480,${s.y + th}`} fill={s.r} />
+              <polygon points={`280,${s.y - 70} 480,${s.y} 280,${s.y + 70} 80,${s.y}`} fill={s.top} />
+              <polygon points={`280,${s.y - 70} 480,${s.y} 280,${s.y + 70} 80,${s.y}`} fill="url(#bs-grid)" />
+              <circle
+                cx={170 + i * 62}
+                cy={s.y + 4 - i * 9}
+                r="7"
+                fill="#001e47"
+                class="bs-node"
+                style={`--d:${i * 0.7}s`}
+              />
+            </g>
+          ))
+        }
+      </svg>
+      <span class="bs-chip bs-chip--a">IFC</span>
+      <span class="bs-chip bs-chip--b">openBIM</span>
+      <span class="bs-chip bs-chip--c">bSI</span>
+    </div>
+  </div>
+
+  <div class="bs-hero__waves" aria-hidden="true">
+    {
+      waves.map((w) => (
+        <svg viewBox="0 0 3600 260" preserveAspectRatio="none" style={`--dur:${w.dur}s`}>
+          <path d={w.d} fill="none" stroke={w.c} stroke-width={w.w} stroke-opacity={w.o} stroke-linecap="round" />
+        </svg>
+      ))
+    }
+  </div>
+</section>
+
+<style is:global>
+  .bs-hero {
+    position: relative;
+    isolation: isolate;
+    overflow: clip;
+    min-height: min(100svh, 980px);
+    padding-top: calc(var(--bs-header-h) + clamp(28px, 5vw, 72px));
+    padding-bottom: clamp(150px, 16vw, 230px);
+    background: linear-gradient(180deg, var(--bs-sky-2) 0%, #fff 78%);
+  }
+  .bs-hero__bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+  .bs-hero__blob {
+    position: absolute;
+    background: var(--bs-sky);
+    animation: bs-morph 22s ease-in-out infinite alternate;
+  }
+  .bs-hero__blob--a {
+    width: min(62vw, 760px);
+    aspect-ratio: 1;
+    right: -12vw;
+    top: -10vw;
+    border-radius: var(--bs-blob);
+    opacity: 0.8;
+  }
+  .bs-hero__blob--b {
+    width: min(30vw, 380px);
+    aspect-ratio: 1;
+    left: -8vw;
+    bottom: 12%;
+    border-radius: var(--bs-blob-2);
+    background: var(--bs-blue);
+    opacity: 0.14;
+    animation-duration: 30s;
+  }
+  @keyframes bs-morph {
+    to {
+      border-radius: var(--bs-blob-2);
+      transform: rotate(14deg) scale(1.05);
+    }
+  }
+  .bs-hero__in {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    align-items: center;
+    gap: clamp(24px, 4vw, 72px);
+  }
+  .bs-hero__h1 {
+    margin-top: 22px;
+    font-size: clamp(2rem, 0.6rem + 4.9vw, 5.2rem);
+    white-space: nowrap;
+  }
+  .bs-hero__lead {
+    margin-top: 28px;
+    max-width: 38em;
+  }
+  .bs-hero__cta {
+    margin-top: 36px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 18px 24px;
+  }
+  .bs-hero__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: #fff;
+    border: 1px solid var(--bs-line);
+    box-shadow: var(--bs-shadow);
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--bs-navy);
+    text-decoration: none;
+    transition: transform var(--bs-med) var(--bs-ease);
+  }
+  .bs-hero__badge:hover {
+    transform: translateY(-3px);
+  }
+  .bs-hero__dot {
+    position: relative;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--bs-blue);
+  }
+  .bs-hero__dot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--bs-blue);
+    animation: bs-ping 2.4s ease-out infinite;
+  }
+  @keyframes bs-ping {
+    to {
+      transform: scale(3.2);
+      opacity: 0;
+    }
+  }
+
+  .bs-hero__scene {
+    position: relative;
+    justify-self: center;
+    width: min(100%, 600px);
+  }
+  .bs-scene {
+    width: 100%;
+    overflow: visible;
+    filter: drop-shadow(0 30px 40px rgba(0, 30, 71, 0.18));
+  }
+  .bs-slab {
+    animation: bs-explode 7s var(--bs-ease-io) infinite;
+    animation-delay: calc(var(--n) * 0.12s);
+  }
+  @keyframes bs-explode {
+    0%,
+    12% {
+      transform: translateY(calc(var(--n) * 38px));
+    }
+    45%,
+    70% {
+      transform: translateY(calc(var(--n) * -6px));
+    }
+    100% {
+      transform: translateY(calc(var(--n) * 38px));
+    }
+  }
+  .bs-node {
+    animation: bs-blip 2.6s ease-in-out infinite;
+    animation-delay: var(--d);
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  @keyframes bs-blip {
+    50% {
+      transform: scale(1.5);
+      fill: #009cdd;
+    }
+  }
+  .bs-scene__axis {
+    animation: bs-dash 3s linear infinite;
+  }
+  @keyframes bs-dash {
+    to {
+      stroke-dashoffset: -24;
+    }
+  }
+  .bs-chip {
+    position: absolute;
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: var(--bs-shadow);
+    font-size: 0.875rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: var(--bs-navy);
+    animation: bs-bob 6s ease-in-out infinite;
+  }
+  .bs-chip--a {
+    left: 2%;
+    top: 22%;
+  }
+  .bs-chip--b {
+    right: 0;
+    top: 42%;
+    background: var(--bs-navy);
+    color: #fff;
+    animation-delay: -2s;
+  }
+  .bs-chip--c {
+    left: 12%;
+    bottom: 12%;
+    color: var(--bs-blue-d);
+    animation-delay: -4s;
+  }
+  @keyframes bs-bob {
+    50% {
+      transform: translateY(-14px);
+    }
+  }
+
+  .bs-hero__waves {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: clamp(150px, 18vw, 260px);
+    z-index: -1;
+    pointer-events: none;
+    overflow: clip;
+  }
+  .bs-hero__waves svg {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 500%;
+    height: 100%;
+    animation: bs-drift var(--dur) linear infinite;
+  }
+  @keyframes bs-drift {
+    to {
+      transform: translateX(-20%);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .bs-hero__in {
+      grid-template-columns: 1fr;
+    }
+    .bs-hero__scene {
+      width: min(86%, 460px);
+      margin-top: 16px;
+    }
+    .bs-hero__h1 {
+      font-size: min(11.2vw, 4.4rem);
+    }
+  }
+</style>

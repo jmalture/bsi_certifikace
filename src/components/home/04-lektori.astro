@@ -1,0 +1,164 @@
+---
+import Icon from '../ui/Icon.astro';
+import { pick, type Lang } from '../../i18n';
+import home from '../../i18n/home.json';
+interface Props {
+  lang: Lang;
+}
+const t = pick(home, Astro.props.lang);
+---
+
+<section class="bs-section bs-dark bs-lect" id="lektori">
+  <div class="bs-lect__ring" aria-hidden="true"></div>
+  <div class="bs-wrap">
+    <p class="bs-kicker" data-reveal>{t.lect_kicker}</p>
+    <h2 class="bs-h2 bs-lines"><span class="bs-line"><span>{t.lect_h2}</span></span></h2>
+    <ul class="bs-lect__grid">
+      {
+        t.lect.map((p, i) => (
+          <li class="bs-person" data-reveal style={`--i:${i}`}>
+            <div class="bs-person__pic">
+              <img
+                src={`/media/${p.img}.webp`}
+                srcset={`/media/${p.img}.webp 1x, /media/${p.img}@2x.webp 2x`}
+                alt={`${p.first} ${p.last}`}
+                width="338"
+                height="452"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <h3>
+              {p.first} <span>{p.last}</span>
+            </h3>
+            <p>{p.role}</p>
+            <a
+              class="bs-person__in"
+              href={p.in}
+              target="_blank"
+              rel="noopener"
+              aria-label={`LinkedIn: ${p.first} ${p.last}`}
+            >
+              <Icon name="linkedin" size={20} />
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style is:global>
+  .bs-lect {
+    overflow: clip;
+    background: linear-gradient(160deg, var(--bs-navy) 0%, var(--bs-navy-d) 100%);
+  }
+  .bs-lect__ring {
+    position: absolute;
+    width: 70vmax;
+    aspect-ratio: 1;
+    right: -30vmax;
+    top: -22vmax;
+    border-radius: 50%;
+    border: 2px solid rgba(0, 156, 221, 0.25);
+    box-shadow:
+      inset 0 0 0 80px rgba(0, 156, 221, 0.04),
+      inset 0 0 0 160px rgba(0, 156, 221, 0.03);
+    animation: bs-spin 90s linear infinite;
+  }
+  @keyframes bs-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .bs-lect__grid {
+    list-style: none;
+    padding: 0;
+    margin-top: clamp(44px, 5vw, 72px);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: clamp(20px, 2.4vw, 36px);
+  }
+  .bs-person {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: 10px;
+  }
+  .bs-person__pic {
+    position: relative;
+    aspect-ratio: 1;
+    margin-bottom: 18px;
+    background: var(--bs-blue);
+    border-radius: var(--bs-blob);
+    overflow: clip;
+    transition:
+      border-radius 1.2s var(--bs-ease),
+      transform var(--bs-med) var(--bs-ease);
+  }
+  .bs-person:nth-child(even) .bs-person__pic {
+    border-radius: var(--bs-blob-2);
+  }
+  .bs-person:hover .bs-person__pic {
+    border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%;
+    transform: translateY(-6px) rotate(-2deg);
+  }
+  .bs-person__pic img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 18%;
+    filter: grayscale(0.15);
+    transition:
+      scale 1.2s var(--bs-ease),
+      filter var(--bs-med) var(--bs-ease);
+  }
+  .bs-person:hover .bs-person__pic img {
+    scale: 1.06;
+    filter: none;
+  }
+  .bs-person h3 {
+    font-size: 1.4rem;
+    line-height: 1.12;
+    color: #fff;
+  }
+  .bs-person h3 span {
+    display: block;
+    color: var(--bs-blue-l);
+  }
+  .bs-person p {
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.78);
+  }
+  .bs-person__in {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-top: 8px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.28);
+    color: #fff;
+    transition:
+      background-color var(--bs-fast) var(--bs-ease),
+      color var(--bs-fast) var(--bs-ease);
+  }
+  .bs-person__in:hover {
+    background: #fff;
+    color: var(--bs-navy);
+  }
+  @media (max-width: 1000px) {
+    .bs-lect__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 560px) {
+    .bs-lect__grid {
+      grid-template-columns: 1fr;
+    }
+    .bs-person__pic {
+      max-width: 300px;
+    }
+  }
+</style>

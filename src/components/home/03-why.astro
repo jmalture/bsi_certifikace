@@ -1,0 +1,125 @@
+---
+import Icon from '../ui/Icon.astro';
+import { pick, URLS, type Lang } from '../../i18n';
+import home from '../../i18n/home.json';
+interface Props {
+  lang: Lang;
+}
+const t = pick(home, Astro.props.lang);
+const words = t.why_lead.split(' ');
+---
+
+<section class="bs-section bs-why" id="bimPoint">
+  <div class="bs-wrap bs-why__in">
+    <div class="bs-why__head">
+      <p class="bs-kicker" data-reveal>{t.why_kicker}</p>
+      <h2 class="bs-h2 bs-lines">
+        <span class="bs-line"><span>{t.why_h2}</span></span>
+      </h2>
+      <p class="bs-why__lead" data-words>
+        {
+          words.map((w, i) => (
+            <>
+              <span class="bs-w" style={`--k:${i}`}>
+                {w}
+              </span>{' '}
+            </>
+          ))
+        }
+      </p>
+      <a class="bs-btn bs-btn--blue" href={URLS.bimpoint} target="_blank" rel="noopener" data-reveal>
+        {t.why_cta}
+        <Icon name="arrow" size={18} />
+      </a>
+    </div>
+    <ol class="bs-why__list">
+      {
+        t.why_points.map((p, i) => (
+          <li data-reveal="right" style={`--i:${i % 2}`}>
+            <span class="bs-why__n" aria-hidden="true">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <p>{p}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style is:global>
+  .bs-why {
+    background: #fff;
+    overflow: clip;
+  }
+  .bs-why__in {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(32px, 6vw, 110px);
+    align-items: start;
+  }
+  .bs-why__head {
+    position: sticky;
+    top: calc(var(--bs-header-h) + 32px);
+    display: grid;
+    gap: 0;
+    justify-items: start;
+  }
+  .bs-why__lead {
+    margin: 28px 0 36px;
+    font-size: var(--bs-lead);
+    color: var(--bs-navy);
+    line-height: 1.65;
+  }
+  .bs-why__list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 18px;
+    counter-reset: why;
+  }
+  .bs-why__list li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 22px;
+    align-items: start;
+    padding: clamp(22px, 2.4vw, 34px);
+    background: var(--bs-mist);
+    border: 1px solid var(--bs-line);
+    border-radius: var(--bs-r);
+    transition:
+      background-color var(--bs-med) var(--bs-ease),
+      transform var(--bs-med) var(--bs-ease),
+      box-shadow var(--bs-med) var(--bs-ease),
+      opacity var(--bs-slow) var(--bs-ease),
+      translate var(--bs-slow) var(--bs-ease);
+  }
+  .bs-why__list li:hover {
+    background: #fff;
+    transform: translateX(-6px);
+    box-shadow: var(--bs-shadow);
+  }
+  .bs-why__n {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: var(--bs-blob);
+    background: var(--bs-sky);
+    color: var(--bs-navy);
+    font-weight: 800;
+    font-size: 0.95rem;
+  }
+  .bs-why__list p {
+    color: var(--bs-ink);
+    padding-top: 10px;
+  }
+  @media (max-width: 900px) {
+    .bs-why__in {
+      grid-template-columns: 1fr;
+    }
+    .bs-why__head {
+      position: static;
+    }
+  }
+</style>

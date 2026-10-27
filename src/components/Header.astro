@@ -1,0 +1,256 @@
+---
+import Logo from './ui/Logo.astro';
+import Icon from './ui/Icon.astro';
+import { pick, URLS, type Lang } from '../i18n';
+import chrome from '../i18n/chrome.json';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = pick(chrome, lang);
+const nav = [
+  { href: '#bimPoint', label: t.bimpoint },
+  { href: '#lektori', label: t.lektori },
+  { href: '#certifikace', label: t.certifikace },
+  { href: '#akce', label: t.akce },
+  { href: '#kontakt', label: t.kontakt },
+];
+---
+
+<header class="bs-header" data-header>
+  <div class="bs-header__bar">
+    <a class="bs-header__logo" href="/" aria-label={t.home}><Logo /></a>
+    <nav class="bs-header__nav" aria-label={t.nav_label} data-nav>
+      <ul>
+        {
+          nav.map((n) => (
+            <li>
+              <a href={n.href}>{n.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <div class="bs-header__actions">
+      <a class="bs-header__login" href={URLS.prihlaseni}>{t.prihlaseni}</a>
+      <a class="bs-btn bs-btn--sm" href={URLS.registrace}>{t.registrace}</a>
+      <button class="bs-header__burger" type="button" aria-expanded="false" aria-controls="bs-drawer" data-burger>
+        <span class="screen-reader-text">{t.menu}</span>
+        <span class="bs-header__burger-i" aria-hidden="true"><i></i><i></i></span>
+      </button>
+    </div>
+  </div>
+  <div class="bs-drawer" id="bs-drawer" data-drawer>
+    <ul>
+      {
+        nav.map((n, i) => (
+          <li style={`--i:${i}`}>
+            <a href={n.href}>{n.label}</a>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="bs-drawer__cta">
+      <a class="bs-btn bs-btn--white" href={URLS.registrace}>{t.registrace} <Icon name="arrow" size={18} /></a>
+      <a class="bs-drawer__login" href={URLS.prihlaseni}>{t.prihlaseni}</a>
+    </div>
+  </div>
+</header>
+
+<style is:global>
+  .bs-header {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 100;
+    color: var(--bs-navy);
+    transition:
+      transform 0.5s var(--bs-ease),
+      background-color 0.4s var(--bs-ease),
+      box-shadow 0.4s var(--bs-ease);
+  }
+  .bs-header.is-hidden {
+    transform: translateY(-110%);
+  }
+  .bs-header.is-scrolled,
+  .bs-header.is-open {
+    background: rgba(255, 255, 255, 0.86);
+    backdrop-filter: saturate(1.4) blur(16px);
+    -webkit-backdrop-filter: saturate(1.4) blur(16px);
+    box-shadow: 0 1px 0 var(--bs-line);
+  }
+  .bs-header__bar {
+    max-width: calc(var(--bs-max) + 2 * var(--bs-gutter));
+    margin-inline: auto;
+    padding-inline: var(--bs-gutter);
+    height: var(--bs-header-h);
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+  .bs-header__logo {
+    color: var(--bs-navy);
+    margin-right: auto;
+    display: inline-flex;
+  }
+  .bs-header__nav ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: clamp(14px, 2vw, 34px);
+  }
+  .bs-header__nav a {
+    position: relative;
+    display: inline-block;
+    padding: 8px 2px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--bs-navy);
+  }
+  .bs-header__nav a::after {
+    content: '';
+    position: absolute;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--bs-blue);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: transform 0.45s var(--bs-ease);
+  }
+  .bs-header__nav a:hover::after,
+  .bs-header__nav a[aria-current='true']::after {
+    transform: scaleX(1);
+  }
+  .bs-header__actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .bs-header__login {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--bs-navy);
+  }
+  .bs-header__login:hover {
+    color: var(--bs-blue-d);
+  }
+  .bs-header__burger {
+    display: none;
+    width: 46px;
+    height: 46px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--bs-navy);
+    color: #fff;
+    cursor: pointer;
+    place-items: center;
+  }
+  .bs-header__burger-i {
+    position: relative;
+    width: 20px;
+    height: 12px;
+  }
+  .bs-header__burger-i i {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+    transition:
+      transform 0.45s var(--bs-ease),
+      top 0.45s var(--bs-ease);
+  }
+  .bs-header__burger-i i:first-child {
+    top: 1px;
+  }
+  .bs-header__burger-i i:last-child {
+    top: 9px;
+  }
+  .bs-header.is-open .bs-header__burger-i i:first-child {
+    top: 5px;
+    transform: rotate(45deg);
+  }
+  .bs-header.is-open .bs-header__burger-i i:last-child {
+    top: 5px;
+    transform: rotate(-45deg);
+  }
+
+  .bs-drawer {
+    display: none;
+  }
+  @media (max-width: 1000px) {
+    .bs-header__nav,
+    .bs-header__login {
+      display: none;
+    }
+    .bs-header__burger {
+      display: grid;
+    }
+    .bs-header__actions {
+      gap: 12px;
+    }
+    .bs-drawer {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: fixed;
+      inset: var(--bs-header-h) 0 0 0;
+      padding: 28px var(--bs-gutter) 40px;
+      background: var(--bs-navy);
+      color: #fff;
+      clip-path: inset(0 0 100% 0);
+      visibility: hidden;
+      transition:
+        clip-path 0.6s var(--bs-ease-io),
+        visibility 0s linear 0.6s;
+    }
+    .bs-header.is-open .bs-drawer {
+      clip-path: inset(0);
+      visibility: visible;
+      transition-delay: 0s;
+    }
+    .bs-drawer ul {
+      list-style: none;
+      padding: 0;
+    }
+    .bs-drawer li {
+      opacity: 0;
+      translate: 0 18px;
+      transition:
+        opacity 0.5s var(--bs-ease),
+        translate 0.5s var(--bs-ease);
+    }
+    .bs-header.is-open .bs-drawer li {
+      opacity: 1;
+      translate: 0 0;
+      transition-delay: calc(0.18s + var(--i) * 70ms);
+    }
+    .bs-drawer li a {
+      display: block;
+      padding: 14px 0;
+      font-size: clamp(1.7rem, 7vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+    }
+    .bs-drawer__cta {
+      display: grid;
+      gap: 18px;
+      justify-items: start;
+    }
+    .bs-drawer__login {
+      font-weight: 600;
+      color: var(--bs-blue-l);
+    }
+    .bs-header .bs-header__actions .bs-btn {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,22 @@
+---
+import Hero from './01-hero.astro';
+import Credentials from './02-credentials.astro';
+import Why from './03-why.astro';
+import Lektori from './04-lektori.astro';
+import Certifikace from './05-certifikace.astro';
+import Akce from './06-akce.astro';
+import Kontakt from './07-kontakt.astro';
+import type { Lang } from '../../i18n';
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+---
+
+<Hero lang={lang} />
+<Credentials lang={lang} />
+<Why lang={lang} />
+<Lektori lang={lang} />
+<Certifikace lang={lang} />
+<Akce lang={lang} />
+<Kontakt lang={lang} />

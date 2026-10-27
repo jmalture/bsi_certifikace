@@ -1,0 +1,113 @@
+{
+  "cs": {
+    "meta_title": "bSI certifikace – profesionální certifikace buildingSMART | Bim.Point",
+    "meta_desc": "Získejte mezinárodní kvalifikaci a doklad o svých expertních znalostech v openBIM. Certifikační program bSI od Bim.Point.",
+
+    "hero_kicker": "Profesionální certifikace",
+    "hero_h1": "buildingSMART",
+    "hero_lead": "Získejte mezinárodní kvalifikaci a doklad o svých expertních znalostech v openBIM. Nastartujte svůj kariérní růst s certifikačním programem bSI, který rozšíří vaše odborné znalosti BIM i jejich efektivní využití v praxi.",
+    "hero_cta": "Registrace",
+    "hero_badge": "Nové termíny školení pro rok 2025/2026",
+    "hero_scene_label": "Ilustrace: vrstvy BIM modelu budovy s informacemi",
+
+    "cred_label": "Odborné zázemí",
+    "cred": [
+      { "k": "czBIM buildingSMART CZ", "v": "zakládající člen" },
+      { "k": "EU BIM Task Group", "v": "zastoupení" },
+      { "k": "IFMA", "v": "aktivní člen" },
+      { "k": "buildingSMART International", "v": "autorizace k pořádání školení" }
+    ],
+
+    "why_kicker": "O Bim.Pointu",
+    "why_h2": "Proč s námi?",
+    "why_lead": "Jako zakládající člen odborného sdružení czBIM buildingSMART CZ máme bohaté zkušenosti s přípravou a optimalizací BIM modelů a jejich využitím nejen ve fázi facility managementu, ale po celou dobu životnosti objektů.",
+    "why_points": [
+      "Vytvořili jsme online aplikaci Bim.Point pro práci s informacemi v BIM modelech.",
+      "Pomáháme společnostem se zaváděním BIM a digitalizací a fungujeme také jako jejich poradci pro nastavení procesů pro efektivní management i v přípravných procesech zadání projektu.",
+      "Jsme specialisté na práci s daty a zavádíme BIM do praxe.",
+      "Své expertní znalosti předáváme na mezinárodních i lokálních oborových konferencích, a tím se aktivně zasazujeme o neustálé zvyšování úrovně odborných znalostí ve společnostech po celém světě.",
+      "Máme zastoupení v EU BIM Task Group, jsme aktivními členy IFMA."
+    ],
+    "why_cta": "Přejít na Bim.Point",
+
+    "lect_kicker": "Lektoři",
+    "lect_h2": "Naši lektoři",
+    "lect": [
+      {
+        "first": "Petr",
+        "last": "Matyáš",
+        "role": "Obchodní ředitel di5 architekti inženýři, předseda czBIM, člen pracovní skupiny EU BIM Task Group nominovaný MPO ČR",
+        "img": "petr-matyas",
+        "in": "https://www.linkedin.com/in/petr-maty%C3%A1%C5%A1-3a920693/"
+      },
+      {
+        "first": "Petr",
+        "last": "Jirát",
+        "role": "BIM manažer, tvůrce firemních standardů a šablon, předseda BIM fóra",
+        "img": "petr-jirat",
+        "in": "https://www.linkedin.com/in/peter-jir%C3%A1t-4ba75482/"
+      },
+      {
+        "first": "Kristýna",
+        "last": "Prušková",
+        "role": "Asistentka (VŠTE), doktorandka (FSv, ČVUT, téma Procesy a datové toky v kontextu BIM), členka řešitelských týmů zabývajících se implementací BIM",
+        "img": "kristyna-pruskova",
+        "in": "https://www.linkedin.com/in/krist%C3%BDna-pru%C5%A1kov%C3%A1-7181abb3/"
+      },
+      {
+        "first": "Agnieszka",
+        "last": "Szostko Budzińska",
+        "role": "Koordinátorka integrace BIM do CAFM, konzultantka Bim.Point, vedoucí odborných workshopů",
+        "img": "agnieszka-szostko-budzinska",
+        "in": "https://www.linkedin.com/in/agnieszka-sz%C3%B3stko-budzi%C5%84ska-295a71105/"
+      }
+    ],
+
+    "cert_kicker": "Certifikace",
+    "cert_h2_a": "Profesionální certifikace",
+    "cert_h2_b": "Foundation Basic",
+    "cert_p1": "Profesionální certifikaci buildingSMART vydává mezinárodní organizace bSI (buildingSMART International). Bim.Point je v Česku jednou z mála společností, která od této organizace získala autorizaci k pořádání mezinárodně standardizovaného a uznávaného školení. Jenom s absolvovaným školením je možné složit zkoušku a obdržet bSi certifikaci jako mezinárodní doklad o kvalifikaci pro openBIM.",
+    "cert_p2": "Organizace bSI se aktivně zasazuje o digitální transformaci stavebnictví a vytváří nové otevřené mezinárodní standardy, procesy a osvědčené postupy pro projektování, výstavbu a provoz staveb a infrastruktury.",
+    "help_h3": "Certifikace vám pomůže:",
+    "help": [
+      "Rozpoznat výhody BIM oproti tradiční realizaci projektu",
+      "Porozumět managementu informací v BIM a jeho integraci do organizace",
+      "Rozpoznat potřebu otevřených a spolupracujících řešení",
+      "Rozšířit znalosti v oblasti BIM a získat certifikovaný doklad o kvalifikaci"
+    ],
+
+    "path_label": "Cesta k certifikátu",
+    "step1_h3": "Náš přístup",
+    "step1_lead": "Všechny naše znalosti v BIM využíváme dennodenně v praxi při našich realizacích.",
+    "step1_p": [
+      "Proto vám naši lektoři pomohou probíraným tématům nejen plně porozumět, ale naučí vás je i aplikovat. Pokud chcete své zaměření více profilovat, můžete tomu přizpůsobit výběr termínu. Program některých termínů jsme obohatili o praxi BIM koordinátorů, jiných o činnosti Facility Managerů. Obsah povinný pro zvládnutí certifikační zkoušky je pro všechny termíny stejný.",
+      "Všechna školení jsou koncipována jako jednodenní intenzivní kurzy s týmem expertů, kteří vám předají veškeré podstatné informace z pěti předepsaných tematických bloků a souhrnné materiály k samostudiu."
+    ],
+    "stat_days_n": "1",
+    "stat_days_l": "den intenzivního kurzu",
+    "stat_blocks_n": "5",
+    "stat_blocks_l": "předepsaných tematických bloků",
+    "step2_h3": "Závěrečná zkouška",
+    "step2_lead": "Jako poskytovatel školení vám zprostředkujeme i závěrečnou zkoušku. Po jejím úspěšném absolvování získáte mezinárodní certifikát bSI.",
+    "step2_p": "Po absolvování školení se skrze svůj účet na našich webových stránkách můžete registrovat ke zkoušce u organizace buildingSMART International, která certifikáty vydává. Veškeré informace týkající se zkoušky, postupu registrace, termínů i další detaily o jejím průběhu se dozvíte v závěrečné části školení.",
+    "step_a": "Školení",
+    "step_b": "Zkouška",
+    "step_c": "Certifikát bSI",
+
+    "akce_kicker": "Akce!",
+    "akce_n": "20",
+    "akce_unit": "%",
+    "akce_h2": "Studentská sleva",
+    "akce_p": "Studentská sleva 20 % na všechny formy školení (online i prezenční).",
+    "akce_p2": "Bližší informace vám podá koordinátor.",
+
+    "help_kicker": "Kontakt",
+    "help_h2": "Nevíte si rady?",
+    "help_p": "Jsme tu pro vás. Pokud máte jakýkoliv dotaz ohledně výběru školení, termínů, registrace nebo třeba průběhu školení, neváhejte se na nás obrátit.",
+    "contact_role": "Koordinátorka",
+    "contact_mail": "E-mail",
+    "contact_tel": "Tel.",
+    "copy": "Kopírovat",
+    "copied": "Zkopírováno"
+  }
+}

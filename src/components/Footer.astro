@@ -1,0 +1,104 @@
+---
+import Logo from './ui/Logo.astro';
+import Icon from './ui/Icon.astro';
+import { pick, FIRM, URLS, type Lang } from '../i18n';
+import chrome from '../i18n/chrome.json';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = pick(chrome, lang);
+---
+
+<footer class="bs-footer bs-dark">
+  <div class="bs-wrap bs-footer__in">
+    <div class="bs-footer__brand">
+      <a href={URLS.bimpoint} target="_blank" rel="noopener" aria-label={FIRM.name}><Logo /></a>
+      <address aria-label={t.legal_label}>
+        <b>{FIRM.name}</b><br />
+        {FIRM.street}<br />
+        {FIRM.zip}
+        {FIRM.city}<br />
+        <a href={FIRM.officeHref}>{FIRM.office}</a>
+      </address>
+    </div>
+    <div class="bs-footer__social" role="list" aria-label={t.social_label}>
+      <a role="listitem" href={URLS.facebook} target="_blank" rel="noopener" aria-label={t.facebook}>
+        <Icon name="facebook" size={22} />
+      </a>
+      <a role="listitem" href={URLS.linkedin} target="_blank" rel="noopener" aria-label={t.linkedin}>
+        <Icon name="linkedin" size={22} />
+      </a>
+      <a class="bs-footer__top" href="#top" aria-label={t.to_top}><Icon name="up" size={22} /></a>
+    </div>
+  </div>
+  <div class="bs-wrap bs-footer__legal">
+    <p>Copyright 2022 – Brišová, Boleslav, Matyáš</p>
+  </div>
+</footer>
+
+<style is:global>
+  .bs-footer {
+    position: relative;
+    background: var(--bs-navy-d);
+    padding-block: 72px 28px;
+    border-radius: var(--bs-r-lg) var(--bs-r-lg) 0 0;
+    margin-top: calc(var(--bs-r-lg) * -1);
+  }
+  .bs-footer__in {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 40px;
+  }
+  .bs-footer__brand {
+    display: grid;
+    gap: 28px;
+    color: #fff;
+  }
+  .bs-footer address {
+    font-style: normal;
+    color: rgba(255, 255, 255, 0.78);
+    line-height: 1.7;
+  }
+  .bs-footer address b {
+    color: #fff;
+  }
+  .bs-footer a {
+    text-decoration: none;
+  }
+  .bs-footer address a:hover {
+    color: var(--bs-blue-l);
+  }
+  .bs-footer__social {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .bs-footer__social a {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.28);
+    color: #fff;
+    transition:
+      background-color var(--bs-fast) var(--bs-ease),
+      color var(--bs-fast) var(--bs-ease),
+      transform var(--bs-med) var(--bs-ease);
+  }
+  .bs-footer__social a:hover {
+    background: #fff;
+    color: var(--bs-navy);
+    transform: translateY(-4px);
+  }
+  .bs-footer__legal {
+    margin-top: 56px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.6);
+  }
+</style>

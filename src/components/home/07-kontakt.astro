@@ -1,0 +1,185 @@
+---
+import Icon from '../ui/Icon.astro';
+import { pick, FIRM, type Lang } from '../../i18n';
+import home from '../../i18n/home.json';
+interface Props {
+  lang: Lang;
+}
+const t = pick(home, Astro.props.lang);
+---
+
+<section class="bs-section bs-kontakt" id="kontakt">
+  <div class="bs-wrap bs-kontakt__in">
+    <div class="bs-kontakt__copy">
+      <p class="bs-kicker" data-reveal>{t.help_kicker}</p>
+      <h2 class="bs-h2 bs-lines"><span class="bs-line"><span>{t.help_h2}</span></span></h2>
+      <p class="bs-lead" data-reveal style="--i:1">{t.help_p}</p>
+    </div>
+    <article class="bs-kcard" data-reveal="pop" style="--i:1">
+      <div class="bs-kcard__pic">
+        <img
+          src="/media/petra-vankova.webp"
+          srcset="/media/petra-vankova.webp 1x, /media/petra-vankova@2x.webp 2x"
+          alt={FIRM.coordinator}
+          width="338"
+          height="452"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+      <div class="bs-kcard__body">
+        <p class="bs-kcard__role">{t.contact_role}</p>
+        <h3>{FIRM.coordinator}</h3>
+        <ul>
+          <li>
+            <a href={`mailto:${FIRM.mail}`}><Icon name="mail" size={20} /><span>{FIRM.mail}</span></a>
+            <button type="button" class="bs-copy" data-copy={FIRM.mail} aria-label={`${t.copy}: ${FIRM.mail}`}>
+              <Icon name="copy" size={18} /><span class="bs-copy__ok" aria-live="polite">{t.copied}</span>
+            </button>
+          </li>
+          <li>
+            <a href={FIRM.phoneHref}><Icon name="phone" size={20} /><span>{FIRM.phone}</span></a>
+            <button type="button" class="bs-copy" data-copy={FIRM.phone} aria-label={`${t.copy}: ${FIRM.phone}`}>
+              <Icon name="copy" size={18} /><span class="bs-copy__ok" aria-live="polite">{t.copied}</span>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </article>
+  </div>
+</section>
+
+<style is:global>
+  .bs-kontakt {
+    background: var(--bs-sky-2);
+    border-radius: var(--bs-r-lg) var(--bs-r-lg) 0 0;
+    margin-top: calc(var(--bs-r-lg) * -1);
+    padding-bottom: calc(clamp(84px, 10vw, 156px) + var(--bs-r-lg));
+    z-index: 1;
+  }
+  .bs-kontakt__in {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(32px, 6vw, 100px);
+    align-items: center;
+  }
+  .bs-kontakt .bs-lead {
+    margin-top: 22px;
+    max-width: 30em;
+  }
+  .bs-kcard {
+    display: grid;
+    grid-template-columns: minmax(120px, 0.7fr) 1.3fr;
+    gap: clamp(18px, 2.4vw, 32px);
+    align-items: center;
+    padding: clamp(20px, 2.4vw, 32px);
+    background: #fff;
+    border-radius: var(--bs-r-lg);
+    box-shadow: var(--bs-shadow-lg);
+  }
+  .bs-kcard__pic {
+    aspect-ratio: 1;
+    border-radius: var(--bs-blob);
+    overflow: clip;
+    background: var(--bs-sky);
+  }
+  .bs-kcard__pic img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 18%;
+  }
+  .bs-kcard__role {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--bs-blue-d);
+  }
+  .bs-kcard h3 {
+    margin: 6px 0 18px;
+    font-size: clamp(1.5rem, 1.2rem + 1vw, 2.1rem);
+    color: var(--bs-navy);
+  }
+  .bs-kcard ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .bs-kcard li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+  .bs-kcard li > a {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--bs-navy);
+    overflow-wrap: anywhere;
+  }
+  .bs-kcard li > a:hover {
+    color: var(--bs-blue-d);
+  }
+  .bs-kcard li > a svg {
+    flex: none;
+    color: var(--bs-blue-d);
+  }
+  .bs-copy {
+    position: relative;
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--bs-mist);
+    color: var(--bs-navy);
+    cursor: pointer;
+    transition: background-color var(--bs-fast) var(--bs-ease);
+  }
+  .bs-copy:hover {
+    background: var(--bs-sky);
+  }
+  .bs-copy__ok {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 8px);
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--bs-navy);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+    opacity: 0;
+    translate: 0 6px;
+    pointer-events: none;
+    transition:
+      opacity var(--bs-fast) var(--bs-ease),
+      translate var(--bs-fast) var(--bs-ease);
+  }
+  .bs-copy.is-copied .bs-copy__ok {
+    opacity: 1;
+    translate: 0 0;
+  }
+  @media (max-width: 900px) {
+    .bs-kontakt__in {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 480px) {
+    .bs-kcard {
+      grid-template-columns: 1fr;
+    }
+    .bs-kcard__pic {
+      max-width: 180px;
+    }
+  }
+</style>

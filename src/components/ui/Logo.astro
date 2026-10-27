@@ -1,0 +1,16 @@
+---
+import svg from './logo.svg.html?raw';
+---
+
+<span class="bs-logo" set:html={svg} />
+
+<style is:global>
+  .bs-logo {
+    display: inline-flex;
+    line-height: 0;
+  }
+  .bs-logo__svg {
+    height: auto;
+    width: clamp(132px, 12vw, 168px);
+  }
+</style>

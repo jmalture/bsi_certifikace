@@ -1,0 +1,6 @@
+dist/
+node_modules/
+public/
+src/styles/legacy*.css
+*.json
+src/components/ui/logo.svg.html

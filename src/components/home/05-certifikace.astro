@@ -1,0 +1,263 @@
+---
+import Icon from '../ui/Icon.astro';
+import { pick, type Lang } from '../../i18n';
+import home from '../../i18n/home.json';
+interface Props {
+  lang: Lang;
+}
+const t = pick(home, Astro.props.lang);
+---
+
+<section class="bs-section bs-cert" id="certifikace">
+  <div class="bs-wrap">
+    <div class="bs-cert__head">
+      <p class="bs-kicker" data-reveal>{t.cert_kicker}</p>
+      <h2 class="bs-h2 bs-lines">
+        <span class="bs-line"><span>{t.cert_h2_a}</span></span>
+        <span class="bs-line" style="--l:1"><span class="bs-grad">{t.cert_h2_b}</span></span>
+      </h2>
+      <div class="bs-cert__intro">
+        <p data-reveal style="--i:1">{t.cert_p1}</p>
+        <p data-reveal style="--i:2">{t.cert_p2}</p>
+      </div>
+    </div>
+
+    <h3 class="bs-cert__h3" data-reveal>{t.help_h3}</h3>
+    <ul class="bs-cert__cards">
+      {
+        t.help.map((h, i) => (
+          <li class="bs-card" data-reveal="pop" style={`--i:${i}`}>
+            <span class="bs-card__ic">
+              <Icon name="check" size={26} />
+            </span>
+            <p>{h}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="bs-path" aria-label={t.path_label}>
+      <ol class="bs-path__steps" data-reveal="fade">
+        <li><span>1</span>{t.step_a}</li>
+        <li><span>2</span>{t.step_b}</li>
+        <li><span><Icon name="check" size={20} /></span>{t.step_c}</li>
+      </ol>
+      <div class="bs-path__grid">
+        <article class="bs-path__card" data-reveal="left">
+          <h3>{t.step1_h3}</h3>
+          <p class="bs-path__lead">{t.step1_lead}</p>
+          {t.step1_p.map((p) => <p>{p}</p>)}
+          <dl class="bs-path__stats">
+            <div>
+              <dt><b data-count={t.stat_days_n}>{t.stat_days_n}</b></dt>
+              <dd>{t.stat_days_l}</dd>
+            </div>
+            <div>
+              <dt><b data-count={t.stat_blocks_n}>{t.stat_blocks_n}</b></dt>
+              <dd>{t.stat_blocks_l}</dd>
+            </div>
+          </dl>
+        </article>
+        <article class="bs-path__card bs-path__card--dark" data-reveal="right">
+          <h3>{t.step2_h3}</h3>
+          <p class="bs-path__lead">{t.step2_lead}</p>
+          <p>{t.step2_p}</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  .bs-cert {
+    background: linear-gradient(180deg, #fff 0%, var(--bs-mist) 100%);
+    border-radius: var(--bs-r-lg) var(--bs-r-lg) 0 0;
+    margin-top: calc(var(--bs-r-lg) * -1);
+    z-index: 1;
+  }
+  .bs-cert__head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: clamp(28px, 6vw, 100px);
+    align-items: end;
+  }
+  .bs-cert__head .bs-kicker,
+  .bs-cert__head .bs-h2 {
+    grid-column: 1;
+  }
+  .bs-cert__intro {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    display: grid;
+    gap: 16px;
+    color: var(--bs-grey);
+  }
+  .bs-cert__intro p:first-child {
+    color: var(--bs-ink);
+    font-size: 1.12rem;
+  }
+  .bs-cert__h3 {
+    margin: clamp(56px, 7vw, 96px) 0 24px;
+    font-size: var(--bs-h3);
+    color: var(--bs-navy);
+  }
+  .bs-cert__cards {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+  .bs-card {
+    display: grid;
+    gap: 18px;
+    align-content: start;
+    padding: 28px 26px 32px;
+    background: #fff;
+    border: 1px solid var(--bs-line);
+    border-radius: var(--bs-r);
+    transition:
+      transform var(--bs-med) var(--bs-ease),
+      box-shadow var(--bs-med) var(--bs-ease),
+      background-color var(--bs-med) var(--bs-ease),
+      color var(--bs-med) var(--bs-ease),
+      opacity var(--bs-slow) var(--bs-ease),
+      translate var(--bs-slow) var(--bs-ease),
+      scale var(--bs-slow) var(--bs-ease);
+  }
+  .bs-card:hover {
+    background: var(--bs-navy);
+    color: #fff;
+    transform: translateY(-8px);
+    box-shadow: var(--bs-shadow-lg);
+  }
+  .bs-card__ic {
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border-radius: var(--bs-blob);
+    background: var(--bs-sky);
+    color: var(--bs-navy);
+    transition: background-color var(--bs-med) var(--bs-ease);
+  }
+  .bs-card:hover .bs-card__ic {
+    background: var(--bs-blue);
+  }
+  .bs-card p {
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  .bs-path {
+    margin-top: clamp(64px, 8vw, 120px);
+  }
+  .bs-path__steps {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px 0;
+    margin-bottom: 36px;
+    font-weight: 700;
+    color: var(--bs-navy);
+  }
+  .bs-path__steps li {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .bs-path__steps li + li::before {
+    content: '';
+    width: clamp(28px, 7vw, 96px);
+    height: 2px;
+    margin-inline: 14px;
+    background: repeating-linear-gradient(90deg, var(--bs-blue) 0 6px, transparent 6px 12px);
+  }
+  .bs-path__steps span {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--bs-navy);
+    color: #fff;
+    font-size: 0.9rem;
+  }
+  .bs-path__steps li:last-child span {
+    background: var(--bs-blue-d);
+  }
+  .bs-path__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 22px;
+  }
+  .bs-path__card {
+    display: grid;
+    gap: 16px;
+    align-content: start;
+    padding: clamp(28px, 3.4vw, 52px);
+    background: #fff;
+    border-radius: var(--bs-r-lg);
+    border: 1px solid var(--bs-line);
+    color: var(--bs-grey);
+  }
+  .bs-path__card h3 {
+    font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.3rem);
+    color: var(--bs-navy);
+  }
+  .bs-path__lead {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--bs-ink);
+  }
+  .bs-path__card--dark {
+    background: var(--bs-navy);
+    border-color: transparent;
+    color: rgba(255, 255, 255, 0.82);
+  }
+  .bs-path__card--dark h3,
+  .bs-path__card--dark .bs-path__lead {
+    color: #fff;
+  }
+  .bs-path__stats {
+    margin: 12px 0 0;
+    display: flex;
+    gap: clamp(24px, 4vw, 56px);
+    padding-top: 24px;
+    border-top: 1px solid var(--bs-line);
+  }
+  .bs-path__stats dt {
+    font-size: clamp(2.8rem, 2rem + 2.4vw, 4.4rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: var(--bs-blue-d);
+  }
+  .bs-path__stats dd {
+    margin: 6px 0 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    max-width: 12em;
+  }
+  @media (max-width: 1000px) {
+    .bs-cert__cards {
+      grid-template-columns: 1fr 1fr;
+    }
+    .bs-path__grid,
+    .bs-cert__head {
+      grid-template-columns: 1fr;
+    }
+    .bs-cert__intro {
+      grid-column: 1;
+      grid-row: auto;
+      margin-top: 28px;
+    }
+  }
+  @media (max-width: 560px) {
+    .bs-cert__cards {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
