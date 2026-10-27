@@ -6,7 +6,7 @@ interface Props {
   tone?: 'light' | 'dark';
   rings?: { x: number; y: number; s: number }[];
 }
-const { n = 14, tone = 'light', rings = [] } = Astro.props;
+const { n = 0, tone = 'light', rings = [] } = Astro.props; // rising bubbles removed on request: n stays 0, rings remain
 const bub = Array.from({ length: n }, (_, i) => {
   const r = (k: number) => ((i * k + 7) % 17) / 17;
   return {
